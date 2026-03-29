@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 york9675 -->
+<component type="desktop-application">
+  <id>com.yorkdev.lyricseekpro</id>
+  <launchable type="desktop-id">LyricSeekPro.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>LyricSeek Pro</name>
+  <developer id="com.yorkdev">
+    <name>york9675</name>
+  </developer>
+  <update_contact>https://github.com/york9675/LyricSeek-Pro/issues</update_contact>
+  <summary>Download lyrics from multiple providers</summary>
+  <description>
+    <p>Mass-download synced or plain lyrics for your offline music library.</p>
+    <p>LyricSeek Pro scans all files in your chosen directory for music files and saves fetched lyrics alongside your tracks.</p>
+    <p>LyricSeek Pro supports multiple lyric providers.</p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/york9675/LyricSeek-Pro/main/screenshots/02.png</image>
+      <caption>Music playing with synced lyrics</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/york9675/LyricSeek-Pro/main/screenshots/03.png</image>
+      <caption>Searching for lyrics</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/york9675/LyricSeek-Pro/main/screenshots/04.png</image>
+      <caption>Downloading lyrics</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/york9675/LyricSeek-Pro/main/screenshots/04.png</image>
+      <caption>Editing lyrics</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/york9675/LyricSeek-Pro</url>
+  <url type="vcs-browser">https://github.com/york9675/LyricSeek-Pro</url>
+  <url type="bugtracker">https://github.com/york9675/LyricSeek-Pro/issues</url>
+  <content_rating type="oars-1.1"/>
+  <provides>
+    <binary>LyricSeekPro</binary>
+  </provides>
+</component>

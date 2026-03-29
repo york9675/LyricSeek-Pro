@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=LyricSeek Pro
+Comment=Download lyrics from multiple providers
+Categories=AudioVideo;Audio;Music;
+Exec=LyricSeekPro
+Icon=LyricSeekPro
+StartupWMClass=LyricSeekPro

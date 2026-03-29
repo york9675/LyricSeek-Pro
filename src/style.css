@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-brave-95 cursor-default;
+}
+
+.titlebar {
+  height: 30px;
+  background: #329ea3;
+  user-select: none;
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.titlebar-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+}
+
+.titlebar-button:hover {
+  background: #5bbec3;
+}
+
+.button {
+  @apply transition uppercase font-bold flex gap-1 items-center justify-center;
+}
+
+.button-normal {
+  @apply bg-brave-90 hover:bg-brave-80 text-brave-25 active:bg-brave-70
+  dark:bg-brave-10 dark:text-brave-90
+  dark:hover:bg-brave-20 dark:active:bg-brave-25;
+}
+
+.toolbar .button-normal {
+  @apply dark:bg-brave-5;
+}
+
+.button-warning {
+  @apply bg-yellow-100 hover:bg-yellow-200 text-yellow-800 active:bg-yellow-300;
+}
+
+.button-primary {
+  @apply bg-brave-30 hover:bg-brave-35 text-white active:bg-brave-25 dark:bg-brave-80 dark:hover:bg-brave-90 dark:active:bg-brave-90 dark:text-brave-20;
+}
+
+.button-secondary {
+  @apply bg-brave-90 text-brave-30 hover:bg-brave-80 active:bg-brave-70;
+}
+
+.button-working {
+  @apply bg-brave-90 hover:bg-brave-80 text-brave-25 active:bg-brave-70;
+}
+
+.button-disabled {
+  @apply box-border border-2 border-brave-90 dark:border-brave-20 bg-brave-98 dark:bg-brave-10 text-brave-70 dark:text-brave-20 cursor-not-allowed;
+}
+
+.button-blend {
+  @apply hover:bg-brave-90 text-brave-25 active:bg-brave-70;
+}
+
+.button-done {
+  @apply bg-green-100 hover:bg-green-200 text-green-800 active:bg-green-800 active:text-white;
+}
+
+.button-tiny {
+  @apply text-brave-30 hover:bg-brave-30 hover:text-white dark:text-brave-95 rounded p-2 transition;
+}
+
+.link {
+  @apply text-green-800 dark:text-green-400 hover:text-green-900 hover:dark:text-green-200 active:text-green-700 active:dark:text-white transition text-sm;
+}
+
+.group-label {
+  @apply font-bold text-brave-30 dark:text-brave-90 block;
+}
+
+.child-label {
+  @apply text-sm text-brave-35 dark:text-brave-95;
+}
+
+.input {
+  @apply bg-brave-98 box-border border border-brave-90 focus:border-brave-80 outline-none
+  text-sm rounded-full transition text-brave-35 placeholder:text-brave-70
+  dark:bg-brave-5 dark:border-brave-30 dark:focus:border-brave-20 dark:text-brave-95
+  dark:placeholder:text-brave-60/50;
+}
+
+.modal-content .input {
+  @apply dark:bg-brave-10;
+}
+
+.textarea {
+  @apply bg-brave-98 box-border border border-brave-90 focus:border-brave-80 outline-none
+  text-sm rounded-lg transition text-brave-35 placeholder:text-brave-70 resize-none
+  dark:bg-brave-5 dark:border-brave-30 dark:focus:border-brave-20 dark:text-brave-95
+  dark:placeholder:text-brave-60/50;
+}
+
+.modal-content .textarea {
+  @apply dark:bg-brave-10;
+}
+
+.modal-content {
+  @apply rounded-lg bg-white dark:bg-brave-5 flex flex-col m-2 select-none text-brave-35 dark:text-brave-95;
+  overscroll-behavior: contain;
+}
+
+.textarea {
+  @apply bg-brave-98 box-border border border-brave-90 focus:border-brave-80 outline-none text-sm rounded-lg transition text-brave-35 placeholder:text-brave-70 resize-none;
+}
+
+.modal-content {
+  @apply rounded-lg bg-white flex flex-col m-2 select-none;
+}
+
+.Vue-Toastification__toast.lyricseekpro-toast {
+  padding: 12px 24px !important;
+  min-width: auto !important;
+  min-height: auto !important;
+}
+
+/* Applied to the toast body when using regular strings as content */
+.Vue-Toastification__toast-body.toast-body-1 {
+  font-size: 12px;
+}
+
+/* Applied to a wrapper div when using a custom component as content */
+.Vue-Toastification__toast-component-body.toast-body-2 {
+}
+
+.slide-fade-enter-active {
+  transition: all 0.2s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s ease-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(100px);
+  opacity: 0;
+}
+
+.pop-fade-enter-from, .pop-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.pop-fade-enter-to, .pop-fade-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pop-fade-enter-active, .pop-fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.v-popper--theme-lyricseekpro-tooltip .v-popper__inner {
+  background: #ffd9e2;
+  color: #8e004b;
+}
+
+.v-popper--theme-lyricseekpro-tooltip .v-popper__arrow-outer {
+  border-color: #ffd9e2;
+}
+
+.v-popper--theme-lyricseekpro-dropdown .v-popper__inner {
+  @apply bg-brave-95 dark:bg-brave-5 rounded shadow shadow-brave-80 dark:shadow-brave-10;
+}
+
+.v-popper--theme-lyricseekpro-dropdown .v-popper__arrow-outer {
+  visibility: hidden;
+}
+
+.codemirror-custom .cm-editor {
+  @apply outline-none h-full cursor-text;
+}
+
+.codemirror-custom .cm-cursor {
+  @apply border-brave-30 dark:border-brave-90 border-r-[1.2px];
+}
+
+.codemirror-custom .cm-current-lyrics {
+  @apply font-bold;
+}
+
+.codemirror-custom .cm-content {
+  /* Some padding to prevent the text from touching the edge,
+  the gutter calculates its width internally so it's hard to calculate exactly */
+  @apply max-w-[90%];
+}
+
+.codemirror-custom .cm-line {
+  /* Text folding */
+  @apply text-brave-10 dark:text-brave-90 break-words whitespace-pre-wrap w-full;
+}
+
+.codemirror-custom .cm-activeLine {
+  @apply bg-brave-80/30 dark:bg-brave-60/30;
+}
+
+.codemirror-custom .cm-activeLineGutter {
+  @apply bg-brave-80/30 dark:bg-brave-60/30;
+}
+
+.codemirror-custom .cm-gutters {
+  @apply bg-brave-90 dark:bg-brave-10 text-brave-40 border-r border-brave-90 dark:border-brave-10;
+}
+
+.secondary-page {
+  @apply absolute top-0 left-0 w-full h-full bg-white p-4 shadow-lg overflow-y-auto dark:bg-brave-background-dark text-brave-5 dark:text-brave-95;
+}
+
+.secondary-page-back-button {
+  @apply button button-normal transition rounded-full p-4;
+}

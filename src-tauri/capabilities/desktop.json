@@ -1,0 +1,17 @@
+{
+  "identifier": "desktop-capability",
+  "platforms": [
+    "macOS",
+    "windows",
+    "linux"
+  ],
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:window:allow-set-theme",
+    "global-shortcut:default",
+    "shell:default",
+    "dialog:default"
+  ]
+}
