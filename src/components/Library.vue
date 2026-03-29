@@ -34,18 +34,19 @@
   <div v-else class="flex flex-col justify-center items-center w-full h-full">
     <div class="animate-spin text-xl text-brave-30"><Loading /></div>
     <div v-if="isInitializing" class="flex flex-col items-center justify-center text-sm text-brave-40">
-      <div>Initializing library...</div>
-      <div v-if="initializeProgress">{{ initializeProgress.filesScanned }}/{{ initializeProgress.filesCount }} files scanned</div>
+      <div>{{ t('library.loading.initializingLibrary') }}</div>
+      <div v-if="initializeProgress">{{ t('library.loading.filesScanned', { scanned: initializeProgress.filesScanned, total: initializeProgress.filesCount }) }}</div>
     </div>
 
     <div v-else class="flex flex-col items-center justify-center text-sm text-brave-40">
-      <div>Loading library...</div>
+      <div>{{ t('library.loading.loadingLibrary') }}</div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { Loading } from 'mdue'
@@ -63,6 +64,7 @@ import { useToast } from 'vue-toastification'
 import { useModal } from 'vue-final-modal'
 
 const toast = useToast()
+const { t } = useI18n()
 const emit = defineEmits(['uninitializeLibrary'])
 
 const isLoading = ref(true)
@@ -121,7 +123,7 @@ const refreshLibrary = async () => {
     isInitializing.value = false
   } catch (error) {
     console.error(error)
-    toast.error(`Unknown error happened when initializing the library. Error: ${error}`)
+    toast.error(t('library.errors.initializeUnknown', { error }))
   } finally {
     isLoading.value = false
     isInitializing.value = false
@@ -150,7 +152,7 @@ onMounted(async () => {
       isInitializing.value = false
     } catch (error) {
       console.error(error)
-      toast.error(`Unknown error happened when initializing the library. Error: ${error}`)
+      toast.error(t('library.errors.initializeUnknown', { error }))
     } finally {
       isLoading.value = false
       isInitializing.value = false

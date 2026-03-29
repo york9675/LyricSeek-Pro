@@ -59,9 +59,9 @@
     <!-- Lyrics indication -->
     <div class="flex-none w-[10%] flex items-center justify-center p-1" @click="playTrack(track)">
       <div v-if="track">
-        <span v-if="track.instrumental" class="text-gray-200 font-bold text-[0.67rem] bg-gray-500 rounded px-1 py-0.5">Instrumental</span>
-        <span v-else-if="track.lrc_lyrics" class="text-green-200 font-bold text-[0.67rem] bg-green-800 rounded px-1 py-0.5">Synced</span>
-        <span v-else-if="track.txt_lyrics" class="text-gray-200 font-bold text-[0.67rem] bg-gray-800 rounded px-1 py-0.5">Plain</span>
+        <span v-if="track.instrumental" class="text-gray-200 font-bold text-[0.67rem] bg-gray-500 rounded px-1 py-0.5">{{ t('library.track.instrumental') }}</span>
+        <span v-else-if="track.lrc_lyrics" class="text-green-200 font-bold text-[0.67rem] bg-green-800 rounded px-1 py-0.5">{{ t('library.track.synced') }}</span>
+        <span v-else-if="track.txt_lyrics" class="text-gray-200 font-bold text-[0.67rem] bg-gray-800 rounded px-1 py-0.5">{{ t('library.track.plain') }}</span>
       </div>
     </div>
 
@@ -80,6 +80,7 @@
 
 <script setup>
 import { Play, Pause, TextSearch, PlaylistEdit, Replay } from 'mdue'
+import { useI18n } from 'vue-i18n'
 import { humanDuration } from '../../../utils/human-duration.js'
 import { useSearchLyrics } from '../../../composables/search-lyrics.js'
 import { useEditLyrics } from '../../../composables/edit-lyrics.js'
@@ -90,6 +91,7 @@ import { listen as listenEvent } from '@tauri-apps/api/event'
 import { usePlayer } from '@/composables/player.js'
 
 const { playTrack, playingTrack, status, pause, resume } = usePlayer()
+const { t } = useI18n()
 
 const { searchLyrics } = useSearchLyrics()
 const { editLyrics, editingTrack } = useEditLyrics()

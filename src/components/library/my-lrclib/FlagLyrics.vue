@@ -10,27 +10,27 @@
   >
     <div class="flex flex-col items-center">
       <div v-if="!isFlagging">
-        <div class="mb-4">Do you want to flag the lyrics of the song <strong>{{ track.name }} - {{ track.artistName }}</strong>?</div>
+        <div class="mb-4">{{ t('flagLyrics.confirmQuestion', { track: `${track.name} - ${track.artistName}` }) }}</div>
 
-        <label for="flagReason" class="mb-2 text-xs font-bold">Please explain why you want to flag the lyrics:</label>
-        <textarea id="flagReason" v-model="flagReason" class="w-full p-2 rounded textarea" placeholder="Explain why you want to flag the lyrics..." />
+        <label for="flagReason" class="mb-2 text-xs font-bold">{{ t('flagLyrics.explainLabel') }}</label>
+        <textarea id="flagReason" v-model="flagReason" class="w-full p-2 rounded textarea" :placeholder="t('flagLyrics.explainPlaceholder')" />
       </div>
-      <div v-else class="mb-4">Flagging the lyrics of the song <strong>{{ track.name }} - {{ track.artistName }}</strong>...</div>
+      <div v-else class="mb-4">{{ t('flagLyrics.inProgressMessage', { track: `${track.name} - ${track.artistName}` }) }}</div>
 
       <table v-if="isFlagging" class="text-xs table-auto font-mono uppercase">
         <tbody>
           <tr>
-            <td class="px-2 py-1">Request challenge...</td>
+            <td class="px-2 py-1">{{ t('flagLyrics.requestChallenge') }}</td>
             <td class="text-right px-2 py-1">{{ progress.requestChallenge }}</td>
           </tr>
 
           <tr>
-            <td class="px-2 py-1">Solve challenge...</td>
+            <td class="px-2 py-1">{{ t('flagLyrics.solveChallenge') }}</td>
             <td class="text-right px-2 py-1">{{ progress.solveChallenge }}</td>
           </tr>
 
           <tr>
-            <td class="px-2 py-1">Flag lyrics...</td>
+            <td class="px-2 py-1">{{ t('flagLyrics.flagLyrics') }}</td>
             <td class="text-right px-2 py-1">{{ progress.flagLyrics }}</td>
           </tr>
         </tbody>
@@ -39,14 +39,14 @@
 
     <template #footer>
       <div v-if="!isFlagging" class="flex gap-2 justify-center w-full">
-        <button class="button button-primary px-8 py-2 rounded-full" @click="flagLyrics">Confirm Flag</button>
-        <button class="button button-normal px-8 py-2 rounded-full" @click="$emit('close')">Cancel</button>
+        <button class="button button-primary px-8 py-2 rounded-full" @click="flagLyrics">{{ t('flagLyrics.confirm') }}</button>
+        <button class="button button-normal px-8 py-2 rounded-full" @click="$emit('close')">{{ t('common.cancel') }}</button>
       </div>
 
       <div v-else class="flex gap-2 justify-center w-full">
         <button class="button button-disabled px-8 py-2 rounded-full flex gap-3" disabled>
           <Loading class="animate-spin" />
-          <div>Flagging</div>
+          <div>{{ t('flagLyrics.flagging') }}</div>
         </button>
       </div>
     </template>
@@ -56,11 +56,13 @@
 <script setup>
 import { invoke } from '@tauri-apps/api/core'
 import { ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Loading } from 'mdue'
 import { listen } from '@tauri-apps/api/event'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
+const { t } = useI18n()
 const emit = defineEmits(['close'])
 const props = defineProps(['track'])
 
@@ -79,7 +81,7 @@ const flagLyrics = async () => {
 
   try {
     await invoke('flag_lyrics', { trackId: props.track.id, flagReason: flagReason.value })
-    toast.success('The lyrics has been flagged successfully!')
+    toast.success(t('flagLyrics.success'))
   } catch (error) {
     isError.value = true
     console.error(error)

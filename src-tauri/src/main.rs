@@ -24,6 +24,62 @@ use tauri::{AppHandle, Manager, State, Emitter};
 #[cfg(target_os = "macos")]
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 
+#[cfg(target_os = "macos")]
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum AppLocale {
+    En,
+    ZhTw,
+}
+
+#[cfg(target_os = "macos")]
+struct MenuStrings {
+    about: &'static str,
+    settings: &'static str,
+    open_devtools: &'static str,
+    file: &'static str,
+    edit: &'static str,
+    view: &'static str,
+    window: &'static str,
+}
+
+#[cfg(target_os = "macos")]
+fn parse_locale(locale: &str) -> AppLocale {
+    let normalized = locale.trim().to_ascii_lowercase();
+    if normalized.starts_with("zh")
+        && (normalized.contains("tw")
+            || normalized.contains("hant")
+            || normalized.contains("hk")
+            || normalized.contains("mo"))
+    {
+        return AppLocale::ZhTw;
+    }
+    AppLocale::En
+}
+
+#[cfg(target_os = "macos")]
+fn menu_strings(locale: AppLocale) -> MenuStrings {
+    match locale {
+        AppLocale::ZhTw => MenuStrings {
+            about: "關於",
+            settings: "設定...",
+            open_devtools: "開啟開發者工具",
+            file: "檔案",
+            edit: "編輯",
+            view: "檢視",
+            window: "視窗",
+        },
+        AppLocale::En => MenuStrings {
+            about: "About",
+            settings: "Settings...",
+            open_devtools: "Open Developer Tools",
+            file: "File",
+            edit: "Edit",
+            view: "View",
+            window: "Window",
+        },
+    }
+}
+
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct PublishLyricsProgress {
@@ -809,6 +865,24 @@ fn open_devtools(app_handle: AppHandle) {
 }
 
 #[tauri::command]
+fn set_app_locale(locale: &str, app_handle: AppHandle) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    {
+        let locale_override = if locale.trim().eq_ignore_ascii_case("system") {
+            std::env::var("LANG").ok()
+        } else {
+            Some(locale.to_string())
+        };
+
+        let menu = build_macos_menu(&app_handle, locale_override.as_deref())
+            .map_err(|err| err.to_string())?;
+        app_handle.set_menu(menu).map_err(|err| err.to_string())?;
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
 fn drain_notifications(app_state: tauri::State<AppState>) -> Vec<Notify> {
     let mut queued_notifications = app_state.queued_notifications.lock().unwrap();
     let notifications = queued_notifications.drain(..).collect();
@@ -816,24 +890,27 @@ fn drain_notifications(app_state: tauri::State<AppState>) -> Vec<Notify> {
 }
 
 #[cfg(target_os = "macos")]
-fn build_macos_menu(app: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
+fn build_macos_menu(app: &AppHandle, locale: Option<&str>) -> tauri::Result<Menu<tauri::Wry>> {
     let package_info = app.package_info();
+    let menu_locale = locale.map(parse_locale).unwrap_or(AppLocale::En);
+    let strings = menu_strings(menu_locale);
 
     let about_item = MenuItem::with_id(
         app,
         "open_about",
-        format!("About {}", package_info.name),
+        format!("{} {}", strings.about, package_info.name),
         true,
         None::<&str>,
     )?;
     let settings_item = MenuItem::with_id(
         app,
         "open_settings",
-        "Settings...",
+        strings.settings,
         true,
         Some("CmdOrCtrl+,"),
     )?;
-    let devtools_item = MenuItem::with_id(app, "open_devtools", "Open Developer Tools", true, None::<&str>)?;
+    let devtools_item =
+        MenuItem::with_id(app, "open_devtools", strings.open_devtools, true, None::<&str>)?;
 
     let app_menu = Submenu::with_items(
         app,
@@ -856,14 +933,14 @@ fn build_macos_menu(app: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
 
     let file_menu = Submenu::with_items(
         app,
-        "File",
+        strings.file,
         true,
         &[&PredefinedMenuItem::close_window(app, None)?],
     )?;
 
     let edit_menu = Submenu::with_items(
         app,
-        "Edit",
+        strings.edit,
         true,
         &[
             &PredefinedMenuItem::undo(app, None)?,
@@ -878,7 +955,7 @@ fn build_macos_menu(app: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
 
     let view_menu = Submenu::with_items(
         app,
-        "View",
+        strings.view,
         true,
         &[
             &devtools_item,
@@ -889,7 +966,7 @@ fn build_macos_menu(app: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
 
     let window_menu = Submenu::with_items(
         app,
-        "Window",
+        strings.window,
         true,
         &[
             &PredefinedMenuItem::minimize(app, None)?,
@@ -922,7 +999,7 @@ async fn main() {
 
             #[cfg(target_os = "macos")]
             {
-                let menu = build_macos_menu(&handle)?;
+                let menu = build_macos_menu(&handle, std::env::var("LANG").ok().as_deref())?;
                 handle.set_menu(menu)?;
 
                 app.on_menu_event(|app, event| match event.id().as_ref() {
@@ -1035,6 +1112,7 @@ async fn main() {
             set_volume,
             get_cover_image,
             open_devtools,
+            set_app_locale,
             drain_notifications,
         ])
         .run(tauri::generate_context!())

@@ -3,6 +3,7 @@ import App from "./App.vue"
 import Toast, { POSITION } from 'vue-toastification'
 import { createVfm } from 'vue-final-modal'
 import FloatingVue from 'floating-vue'
+import { i18n } from './i18n'
 
 import 'vue-toastification/dist/index.css'
 import 'vue-final-modal/style.css'
@@ -46,6 +47,7 @@ app.use(FloatingVue, {
   },
 })
 app.use(vfm)
+app.use(i18n)
 app.mount('#app')
 
 document.addEventListener(

@@ -1,13 +1,13 @@
 <template>
   <div class="flex gap-2 items-center flex-row justify-center my-1 w-full px-2">
     <div class="flex flex-row items-center gap-2">
-      <label for="autosearch" class="group-label">Auto</label>
+      <label for="autosearch" class="group-label">{{ t('searchBar.auto') }}</label>
       <input type="checkbox" id="autosearch" v-model="autoSearch"
         class="bg-brave-95 border border-brave-95 focus:border-brave-90 text-gray-900 outline-none text-sm rounded transition block min-w-fit p-1.5" />
     </div>
     <input type="text" id="searchInput" v-model="searchInput"
       class="bg-brave-95 border border-brave-95 focus:border-brave-90 text-gray-900 outline-none text-sm rounded transition block w-full max-w-2xl p-1.5"
-      placeholder="Search" @keyup.enter="makeSearch" @input="handleAutoSearch" />
+      :placeholder="t('searchBar.searchPlaceholder')" @keyup.enter="makeSearch" @input="handleAutoSearch" />
     <button class="button button-normal px-4 py-1.5 rounded-full h-full" @click="makeSearch" :disabled="cooldown"
       :class="{
         'cursor-not-allowed': cooldown,
@@ -26,8 +26,11 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Magnify, Close, Loading } from 'mdue'
 import { useSearchLibrary } from '@/composables/search-library.js'
+
+const { t } = useI18n()
 
 const DEFAULT_WAIT = 500
 const DEFAULT_COOLDOWN = DEFAULT_WAIT * 0.75

@@ -1,16 +1,16 @@
 <template>
   <BaseModal
-    title="Configuration"
+    :title="t('config.title')"
     @beforeOpen="beforeOpenHandler"
     @close="emit('close')"
     body-class="flex flex-col h-full justify-between overflow-y-auto"
   >
     <div class="flex flex-col gap-8">
       <div>
-        <label class="group-label mb-4">Common</label>
+        <label class="group-label mb-4">{{ t('config.groups.common') }}</label>
 
         <div class="flex flex-col mb-4">
-          <label class="block mb-2 child-label">Download lyrics for</label>
+          <label class="block mb-2 child-label">{{ t('config.downloadLyricsFor.label') }}</label>
 
           <RadioButton
               class="mb-1"
@@ -19,7 +19,7 @@
               id="download-lyrics-for-all"
               value="all"
             >
-              Download lyrics for all songs
+              {{ t('config.downloadLyricsFor.allSongs') }}
             </RadioButton>
 
             <RadioButton
@@ -29,7 +29,7 @@
               id="skip-synced"
               value="skipSynced"
             >
-              Download lyrics for songs without synced lyrics
+              {{ t('config.downloadLyricsFor.noSynced') }}
             </RadioButton>
 
             <RadioButton
@@ -39,19 +39,19 @@
               id="skip-plain"
               value="skipPlain"
             >
-              Download lyrics for songs without plain or synced lyrics
+              {{ t('config.downloadLyricsFor.noPlainOrSynced') }}
             </RadioButton>
         </div>
 
         <div class="flex flex-col mb-4">
-          <label class="block mb-2 child-label">Search settings</label>
+          <label class="block mb-2 child-label">{{ t('config.searchSettings.label') }}</label>
 
           <CheckboxButton
               v-model="showLineCount"
               name="show-line-count"
               id="show-line-count"
             >
-              Show the number of lines a lyric file has in the search menu
+              {{ t('config.searchSettings.showLineCount') }}
           </CheckboxButton>
 
           <CheckboxButton
@@ -60,12 +60,26 @@
               name="prefer-synced-lyrics"
               id="prefer-synced-lyrics"
             >
-              Prefer synced lyrics first across providers (fallback to plain lyrics if needed)
+              {{ t('config.searchSettings.preferSynced') }}
           </CheckboxButton>
         </div>
 
         <div class="flex flex-col mb-4">
-          <label class="block mb-2 child-label">Theme mode</label>
+          <label class="block mb-2 child-label">{{ t('config.language.label') }}</label>
+
+          <select
+            id="language"
+            v-model="editingLocale"
+            class="input w-full py-1.5 px-2"
+          >
+            <option value="system">{{ t('config.language.system') }}</option>
+            <option value="en">{{ t('config.language.en') }}</option>
+            <option value="zh-TW">{{ t('config.language.zhTw') }}</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col mb-4">
+          <label class="block mb-2 child-label">{{ t('config.themeMode.label') }}</label>
 
           <div class="flex gap-4">
             <RadioButton
@@ -74,7 +88,7 @@
               id="theme-auto"
               value="auto"
             >
-              Auto
+              {{ t('config.themeMode.auto') }}
             </RadioButton>
 
             <RadioButton
@@ -83,7 +97,7 @@
               id="theme-light"
               value="light"
             >
-              Light
+              {{ t('config.themeMode.light') }}
             </RadioButton>
 
             <RadioButton
@@ -92,20 +106,20 @@
               id="theme-dark"
               value="dark"
             >
-              Dark
+              {{ t('config.themeMode.dark') }}
             </RadioButton>
           </div>
         </div>
 
         <div class="flex flex-col">
-          <label class="block mb-2 child-label" for="lrclib-instance">LRCLIB instance</label>
+          <label class="block mb-2 child-label" for="lrclib-instance">{{ t('config.lrclibInstance') }}</label>
           <input id="lrclib-instance" type="text" v-model="editingLrclibInstance" placeholder="https://" class="input px-4 h-8">
         </div>
 
         <div class="flex flex-col mt-4">
-          <label class="block mb-2 child-label">Lyrics provider order</label>
+          <label class="block mb-2 child-label">{{ t('config.providersOrder.label') }}</label>
           <div class="text-xs text-brave-35 dark:text-brave-70 mb-2">
-            Providers are tried from top to bottom when downloading lyrics.
+            {{ t('config.providersOrder.description') }}
           </div>
 
           <div class="flex flex-col gap-2">
@@ -127,7 +141,7 @@
                     :checked="editingEnabledProviders.includes(provider)"
                     @change="toggleProviderEnabled(provider, $event.target.checked)"
                   >
-                  <span>{{ editingEnabledProviders.includes(provider) ? 'Enabled' : 'Disabled' }}</span>
+                  <span>{{ editingEnabledProviders.includes(provider) ? t('common.enabled') : t('common.disabled') }}</span>
                 </label>
 
                 <button
@@ -135,7 +149,7 @@
                   class="button rounded-full px-3 py-1 text-[0.65rem]"
                   :class="index === 0 ? 'button-disabled' : 'button-normal'"
                   :disabled="index === 0"
-                  aria-label="Move provider up"
+                  :aria-label="t('config.providersOrder.moveUp')"
                   @click="moveProvider(index, -1)"
                 >
                   <span class="text-base leading-none">↑</span>
@@ -145,7 +159,7 @@
                   class="button rounded-full px-3 py-1 text-[0.65rem]"
                   :class="index === editingProvidersOrder.length - 1 ? 'button-disabled' : 'button-normal'"
                   :disabled="index === editingProvidersOrder.length - 1"
-                  aria-label="Move provider down"
+                  :aria-label="t('config.providersOrder.moveDown')"
                   @click="moveProvider(index, 1)"
                 >
                   <span class="text-base leading-none">↓</span>
@@ -157,7 +171,7 @@
       </div>
 
       <div>
-        <label class="group-label mb-4">External Links</label>
+        <label class="group-label mb-4">{{ t('config.groups.externalLinks') }}</label>
 
         <div class="flex items-start">
           <CheckboxButton
@@ -165,13 +179,13 @@
             name="lastfm-links"
             id="lastfm-links"
           >
-            Enable Last.fm links on player bar (title, artist, album)
+            {{ t('config.externalLinks.lastfm') }}
           </CheckboxButton>
         </div>
       </div>
 
       <div>
-        <label class="group-label mb-4">Experimental</label>
+        <label class="group-label mb-4">{{ t('config.groups.experimental') }}</label>
 
         <div class="flex items-start">
           <CheckboxButton
@@ -180,33 +194,36 @@
             id="try-embed-lyrics"
           >
             <div class="flex flex-col">
-              <span class="mb-0.5">Try to embed the lyrics to the track files when possible</span>
-              <span class="text-xs text-yellow-700 dark:text-yellow-400">This option could corrupt your track files. Make sure to backup your library before enabling it.</span>
+              <span class="mb-0.5">{{ t('config.experimental.embedLyrics') }}</span>
+              <span class="text-xs text-yellow-700 dark:text-yellow-400">{{ t('config.experimental.warning') }}</span>
             </div>
           </CheckboxButton>
         </div>
       </div>
 
       <div class="flex flex-col gap-1">
-        <a href="#" class="link" @click="refreshLibrary">Refresh my library for new changes...</a>
-        <a href="#" class="link" @click="uninitializeLibrary">Add and remove scanning directories...</a>
+        <a href="#" class="link" @click="refreshLibrary">{{ t('config.actions.refreshLibrary') }}</a>
+        <a href="#" class="link" @click="uninitializeLibrary">{{ t('config.actions.manageDirectories') }}</a>
       </div>
     </div>
 
     <template #footer>
-      <button class="button button-primary px-8 py-2 rounded-full" @click="save">Save</button>
+      <button class="button button-primary px-8 py-2 rounded-full" @click="save">{{ t('common.save') }}</button>
     </template>
   </BaseModal>
 </template>
 
 <script setup>
 import { invoke } from '@tauri-apps/api/core'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useGlobalState } from '../../composables/global-state'
 import RadioButton from '@/components/common/RadioButton.vue'
 import CheckboxButton from '@/components/common/CheckboxButton.vue'
+import { getLocalePreference, setLocale } from '@/i18n'
 
 const { setThemeMode, setLrclibInstance } = useGlobalState()
+const { t } = useI18n()
 
 const emit = defineEmits(['close', 'refreshLibrary', 'uninitializeLibrary'])
 
@@ -218,24 +235,25 @@ const tryEmbedLyrics = ref(true)
 const preferSyncedLyrics = ref(true)
 const lastfmLinksEnabled = ref(true)
 const editingThemeMode = ref('light')
+const editingLocale = ref('system')
 const editingLrclibInstance = ref('')
 const defaultProvidersOrder = ['lrclib', 'netease', 'simpmusic', 'genius']
 const editingProvidersOrder = ref([...defaultProvidersOrder])
 const editingEnabledProviders = ref([...defaultProvidersOrder])
 
-const providerLabels = {
-  lrclib: 'LRCLIB',
-  netease: 'NetEase',
-  simpmusic: 'SimpMusic',
-  genius: 'Genius'
-}
+const providerLabels = computed(() => ({
+  lrclib: t('config.providers.lrclib.label'),
+  netease: t('config.providers.netease.label'),
+  simpmusic: t('config.providers.simpmusic.label'),
+  genius: t('config.providers.genius.label')
+}))
 
-const providerDescriptions = {
-  lrclib: 'Synced and plain lyrics from LRCLIB',
-  netease: 'Lyrics from NetEase Cloud Music',
-  simpmusic: 'Community lyrics from SimpMusic',
-  genius: 'Plain lyrics from Genius'
-}
+const providerDescriptions = computed(() => ({
+  lrclib: t('config.providers.lrclib.description'),
+  netease: t('config.providers.netease.description'),
+  simpmusic: t('config.providers.simpmusic.description'),
+  genius: t('config.providers.genius.description')
+}))
 
 const normalizeProvidersOrder = (providersOrder) => {
   const resolvedOrder = []
@@ -319,6 +337,7 @@ const save = async () => {
   })
   setThemeMode(editingThemeMode.value)
   setLrclibInstance(editingLrclibInstance.value)
+  setLocale(editingLocale.value)
   emit('close')
 }
 
@@ -333,6 +352,7 @@ const uninitializeLibrary = () => {
 }
 
 const beforeOpenHandler = async () => {
+  editingLocale.value = getLocalePreference()
   const config = await invoke('get_config')
   skipTracksWithSyncedLyrics.value = config.skip_tracks_with_synced_lyrics
   skipTracksWithPlainLyrics.value = config.skip_tracks_with_plain_lyrics

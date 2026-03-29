@@ -14,7 +14,7 @@
         type="text"
         v-model="keyword"
         class="outline-none grow h-12 px-6 bg-brave-98 dark:bg-brave-5 placeholder:text-brave-30/30 text-brave-20 dark:text-brave-95 dark:placeholder:text-brave-70/30"
-        placeholder="Type a song title, album, or artist to find lyrics..."
+        :placeholder="t('myLrclib.searchPlaceholder')"
         @focus="inputActive = true"
         @blur="inputActive = false"
         autofocus
@@ -24,13 +24,13 @@
         type="button"
         class="rounded-full button h-12 w-12 m-1 flex items-center justify-center"
         :class="showAdvanced ? 'button-primary text-white' : 'button-normal'"
-        title="Toggle advanced search"
+        :title="t('myLrclib.toggleAdvanced')"
         @click="showAdvanced = !showAdvanced"
       >
         <Cog class="text-2xl" />
       </button>
 
-      <button type="submit" class="rounded-full button button-normal h-12 w-12 m-1 flex items-center justify-center" title="Search">
+      <button type="submit" class="rounded-full button button-normal h-12 w-12 m-1 flex items-center justify-center" :title="t('myLrclib.search')">
         <Magnify class="text-2xl" />
       </button>
     </form>
@@ -39,31 +39,31 @@
       <div v-if="showAdvanced" class="w-full max-w-screen-sm rounded-lg bg-brave-98 dark:bg-brave-5 p-4 border border-brave-90 dark:border-brave-30">
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label for="search-artist" class="group-label mb-1">Artist (optional)</label>
+            <label for="search-artist" class="group-label mb-1">{{ t('myLrclib.artistOptional') }}</label>
             <input
               id="search-artist"
               type="text"
               v-model="artistName"
               class="input w-full py-1.5 px-2"
-              placeholder="Artist"
+              :placeholder="t('myLrclib.artist')"
             >
           </div>
 
           <div>
-            <label for="search-album" class="group-label mb-1">Album (optional)</label>
+            <label for="search-album" class="group-label mb-1">{{ t('myLrclib.albumOptional') }}</label>
             <input
               id="search-album"
               type="text"
               v-model="albumName"
               class="input w-full py-1.5 px-2"
-              placeholder="Album"
+              :placeholder="t('myLrclib.album')"
             >
           </div>
 
           <div>
-            <label for="search-provider" class="group-label mb-1">Provider</label>
+            <label for="search-provider" class="group-label mb-1">{{ t('myLrclib.provider') }}</label>
             <select id="search-provider" v-model="selectedProvider" class="input w-full py-1.5 px-2">
-              <option value="auto">Auto (Preference order)</option>
+              <option value="auto">{{ t('myLrclib.providerAuto') }}</option>
               <option
                 v-for="provider in providerOptions"
                 :key="provider"
@@ -75,13 +75,13 @@
           </div>
 
           <div v-if="selectedProvider === 'lrclib'">
-            <label for="search-lrclib-tag" class="group-label mb-1">LRCLIB tag (optional)</label>
+            <label for="search-lrclib-tag" class="group-label mb-1">{{ t('myLrclib.lrclibTagOptional') }}</label>
             <input
               id="search-lrclib-tag"
               type="text"
               v-model="lrclibTag"
               class="input w-full py-1.5 px-2"
-              placeholder="Tag"
+              :placeholder="t('myLrclib.tag')"
             >
           </div>
         </div>
@@ -100,6 +100,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Magnify, Cog } from 'mdue'
 import SearchResult from './my-lrclib/SearchResult.vue'
 import { invoke } from '@tauri-apps/api/core'
@@ -120,6 +121,7 @@ const lrclibTag = ref('')
 const providerOptions = ref([])
 const showAdvanced = ref(false)
 const inputActive = ref(false)
+const { t } = useI18n()
 
 const providerLabels = {
   lrclib: 'LRCLIB',

@@ -7,24 +7,24 @@
     <div class="flex-1 flex gap-4 justify-center items-center text-sm">
       <button
         class="tab"
-        :class="{'active-tab': props.activeTab === 'tracks', 'inactive-tab': activeTab !== 'tracks'}"
+        :class="{'active-tab': props.activeTab === 'tracks', 'inactive-tab': props.activeTab !== 'tracks'}"
         @click.prevent="$emit('changeActiveTab', 'tracks')"
       >
-        Tracks
+        {{ t('library.tabs.tracks') }}
       </button>
       <button
         class="tab"
-        :class="{'active-tab': props.activeTab === 'albums', 'inactive-tab': activeTab !== 'albums'}"
+        :class="{'active-tab': props.activeTab === 'albums', 'inactive-tab': props.activeTab !== 'albums'}"
         @click.prevent="$emit('changeActiveTab', 'albums')"
       >
-        Albums
+        {{ t('library.tabs.albums') }}
       </button>
       <button
         class="tab"
-        :class="{'active-tab': props.activeTab === 'artists', 'inactive-tab': activeTab !== 'artists'}"
+        :class="{'active-tab': props.activeTab === 'artists', 'inactive-tab': props.activeTab !== 'artists'}"
         @click.prevent="$emit('changeActiveTab', 'artists')"
       >
-        Artists
+        {{ t('library.tabs.artists') }}
       </button>
 
       <!-- Create a separator -->
@@ -32,12 +32,12 @@
 
       <button
         class="tab"
-        :class="{'active-tab': props.activeTab === 'my-lrclib', 'inactive-tab': activeTab !== 'my-lrclib'}"
+        :class="{'active-tab': props.activeTab === 'my-lrclib', 'inactive-tab': props.activeTab !== 'my-lrclib'}"
         @click.prevent="$emit('changeActiveTab', 'my-lrclib')"
       >
         <span class="flex items-center gap-1">
           <Magnify class="text-sm" />
-          Search
+          {{ t('library.tabs.search') }}
         </span>
       </button>
     </div>
@@ -46,14 +46,14 @@
       <button v-if="isBuildingQueue" class="button button-disabled px-4 py-1.5 h-full min-w-[12rem] text-xs rounded-full" @click.prevent="$emit('showDownloadViewer')" disabled>
         <div class="animate-spin text-sm"><Loading /></div>
         <div class="flex gap-1">
-          <div>Preparing</div>
+          <div>{{ t('library.header.preparing') }}</div>
         </div>
       </button>
 
       <button v-else-if="isDownloading && downloadedCount !== totalCount" class="button button-working h-full min-w-[12rem] px-4 py-1.5 text-xs rounded-full" @click.prevent="$emit('showDownloadViewer')">
         <div class="animate-spin text-sm"><Loading /></div>
         <div class="flex gap-1">
-          <div>Downloading</div>
+          <div>{{ t('library.header.downloading') }}</div>
           <div>{{ downloadedCount }}/{{ totalCount }}</div>
         </div>
       </button>
@@ -61,14 +61,14 @@
       <button v-else-if="isDownloading" class="button button-done h-full min-w-[12rem] px-4 py-1.5 text-xs rounded-full" @click.prevent="$emit('showDownloadViewer')">
         <div class="text-sm"><Check /></div>
         <span>
-          Downloaded {{ downloadedCount }}/{{ totalCount }}
+          {{ t('library.header.downloadedSummary', { downloaded: downloadedCount, total: totalCount }) }}
         </span>
       </button>
 
       <button v-else class="button button-primary px-4 py-1.5 h-full min-w-[12rem] text-xs rounded-full" @click.prevent="downloadAllLyrics">
         <div class="text-sm"><DownloadMultiple /></div>
         <span>
-          Download all lyrics
+          {{ t('library.header.downloadAllLyrics') }}
         </span>
       </button>
 
@@ -82,19 +82,19 @@
           <div class="dropdown-container">
             <button class="dropdown-item" @click="$emit('refreshLibrary')" v-close-popper>
               <Refresh class="text-brave-20 dark:text-brave-90" />
-              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">Refresh library</span>
+              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">{{ t('library.header.refreshLibrary') }}</span>
             </button>
             <button class="dropdown-item" @click="$emit('uninitializeLibrary')" v-close-popper>
               <FolderMultiple class="text-brave-20 dark:text-brave-90" />
-              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">Manage directories</span>
+              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">{{ t('library.header.manageDirectories') }}</span>
             </button>
             <button class="dropdown-item" @click="$emit('showConfig')" v-close-popper>
               <Cog class="text-brave-20 dark:text-brave-90" />
-              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">Settings</span>
+              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">{{ t('library.header.settings') }}</span>
             </button>
             <button class="dropdown-item" @click="$emit('showAbout')" v-close-popper>
               <Information class="text-brave-20 dark:text-brave-90" />
-              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">About</span>
+              <span class="text-brave-20 dark:text-brave-90 text-sm font-bold">{{ t('library.header.about') }}</span>
             </button>
           </div>
         </template>
@@ -105,6 +105,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { DownloadMultiple, Loading, Check, Cog, Information, DotsVertical, Refresh, FolderMultiple, Magnify } from 'mdue'
 import { useDownloader } from '@/composables/downloader.js'
 import MiniSearch from './MiniSearch.vue'
@@ -112,6 +113,7 @@ import { invoke } from '@tauri-apps/api/core'
 
 const props = defineProps(['activeTab'])
 defineEmits(['changeActiveTab', 'showConfig', 'showAbout', 'showDownloadViewer', 'refreshLibrary', 'uninitializeLibrary'])
+const { t } = useI18n()
 
 const { isDownloading, totalCount, downloadedCount, addToQueue } = useDownloader()
 

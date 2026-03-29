@@ -6,7 +6,7 @@
       <div class="w-full">
         <div class="w-full flex">
           <div class="text-xs text-brave-30/70 font-bold flex w-full dark:text-brave-95">
-            <div class="text-left flex-none w-[65%] p-1">Album</div>
+            <div class="text-left flex-none w-[65%] p-1">{{ t('library.listHeaders.album') }}</div>
             <div class="text-right flex-none w-[15%] p-1"></div>
           </div>
         </div>
@@ -38,6 +38,7 @@
 <script setup>
 import { DownloadMultiple } from 'mdue'
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AlbumItem from './album-list/AlbumItem.vue'
 import AlbumTrackList from './album-list/AlbumTrackList.vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
@@ -45,6 +46,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
 const props = defineProps(['isActive'])
+const { t } = useI18n()
 
 const albumIds = ref([])
 const parentRef = ref(null)

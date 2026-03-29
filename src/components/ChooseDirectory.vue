@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col w-full h-full justify-center items-center">
     <div class="px-4 py-2 flex flex-col gap-4 flex-none">
-      <div class="text-thin text-xl text-brave-5 dark:text-brave-95">Select directories</div>
+      <div class="text-thin text-xl text-brave-5 dark:text-brave-95">{{ $t('chooseDirectory.title') }}</div>
     </div>
 
     <div class="grow flex flex-col items-center justify-center gap-8 w-full max-w-screen-sm">
@@ -27,7 +27,7 @@
           @click.prevent="chooseDirectory"
         >
           <Plus />
-          <div>Add new directory</div>
+          <div>{{ $t('chooseDirectory.addDirectory') }}</div>
         </button>
       </div>
 
@@ -35,7 +35,7 @@
         class="button button-primary w-full p-4 rounded-lg"
         @click.prevent="progressStep"
       >
-        Continue
+        {{ $t('chooseDirectory.continue') }}
       </button>
     </div>
   </div>

@@ -25,6 +25,7 @@ import { ModalsContainer } from 'vue-final-modal'
 import { useGlobalState } from './composables/global-state'
 import { useDownloader } from '@/composables/downloader.js'
 import { useToast } from 'vue-toastification'
+import { i18n, syncNativeLocale } from '@/i18n'
 
 const appWindow = getCurrentWebviewWindow()
 const toast = useToast()
@@ -45,6 +46,7 @@ const uninitializeLibrary = async () => {
 onMounted(async () => {
   init.value = await invoke('get_init')
   loading.value = false
+  await syncNativeLocale()
   await loadGlobalState()
   await darkModeHandle(themeMode.value)
   downloadNext()

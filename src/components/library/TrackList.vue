@@ -6,9 +6,9 @@
       <div class="w-full">
         <div class="w-full flex">
           <div class="text-xs text-brave-30/70 font-bold flex w-full dark:text-brave-95">
-            <div class="text-left flex-none w-[65%] p-1">Track</div> <!-- Adjusted width percentage -->
-            <div class="text-right flex-none w-[10%] p-1">Duration</div>
-            <div class="text-center flex-none w-[10%] p-1">Lyrics</div>
+            <div class="text-left flex-none w-[65%] p-1">{{ t('library.listHeaders.track') }}</div> <!-- Adjusted width percentage -->
+            <div class="text-right flex-none w-[10%] p-1">{{ t('library.listHeaders.duration') }}</div>
+            <div class="text-center flex-none w-[10%] p-1">{{ t('library.listHeaders.lyrics') }}</div>
             <div class="text-right flex-none w-[15%] p-1"></div>
           </div>
         </div>
@@ -42,11 +42,13 @@
 import TrackItem from './track-list/TrackItem.vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { invoke } from '@tauri-apps/api/core'
 import { useSearchLibrary } from '@/composables/search-library.js'
 
 const props = defineProps(['isActive'])
 const emit = defineEmits(['playTrack', 'downloadLyrics'])
+const { t } = useI18n()
 
 const trackIds = ref([])
 const parentRef = ref(null)
