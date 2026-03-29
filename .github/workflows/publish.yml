@@ -23,9 +23,9 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: lts/*
       - name: install Rust stable
@@ -52,7 +52,28 @@ jobs:
         with:
           tagName: __VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
           releaseName: '__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          releaseBody: |
+            **See the assets to download this version and install.**
+
+            ---
+
+            # What's New?
+
+            This update introduces a significant UI update to the settings and theming experience of the Tempo Sync app. The main changes include merging the theme picker and data import/export features into a unified, multi-tabbed Settings panel, reorganizing and renaming UI elements for clarity, and introducing a dedicated theme variable stylesheet for easier theme management.
+
+            <details>
+
+            > 
+
+            </details>
+
+            ***
+
+            © 2026 York Development
+
+            Made with :heart: in Taiwan
+
+            Based on [LRCGET](https://github.com/tranxuanthang/lrcget) project.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}

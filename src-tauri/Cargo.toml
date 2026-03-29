@@ -1,6 +1,6 @@
 [package]
 name = "lyricseek-pro"
-version = "1.0.0"
+version = "1.0.1"
 description = "LyricSeek Pro: multi-provider lyric downloader for offline music libraries."
 authors = ["york9675"]
 license = "MIT"

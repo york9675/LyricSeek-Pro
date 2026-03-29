@@ -27,9 +27,6 @@ It scans tracks in your selected directory and saves lyrics beside each song, wi
 > [!Note]\
 > This project is a modified version of the original [LRCGET](https://github.com/tranxuanthang/lrcget) app.
 
-> [!Warning]\
-> This project is in early development. Expect frequent updates, potential bugs, and breaking changes. Feedback and contributions are welcome!
-
 ## Table of Contents
 
 <details>
@@ -62,9 +59,10 @@ It scans tracks in your selected directory and saves lyrics beside each song, wi
 - Automatic library scanning and batch lyric fetching
 - Support for synced lyrics (LRC) and plain text lyrics
 - Multiple lyric sources: LRCLIB, NetEase, SimpMusic, Genius
-- Built-in player and now playing panel for quick preview
+- Built-in player for quick preview
 - Search and edit tools for correcting or replacing lyrics
 - Cross-platform desktop builds via Tauri (Windows, Linux, macOS)
+- And more!
 
 ## Download
 <p>
