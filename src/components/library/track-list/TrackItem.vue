@@ -30,8 +30,8 @@
     <div
       class="flex-none flex p-1"
       :class="{
-        'w-[55%]': !isShowTrackNumber && showCover,
-        'w-[50%]': isShowTrackNumber && showCover,
+        'w-[calc(65%-3rem)]': !isShowTrackNumber && showCover,
+        'w-[calc(60%-3rem)]': isShowTrackNumber && showCover,
         'w-[65%]': !isShowTrackNumber && !showCover,
         'w-[60%]': isShowTrackNumber && !showCover
       }"
