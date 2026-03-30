@@ -14,16 +14,12 @@ jobs:
         include:
           - platform: 'macos-latest' # for Apple Silicon based macs.
             args: '--target aarch64-apple-darwin'
-            configArgs: '--config src-tauri/tauri.macos.conf.json'
           - platform: 'macos-latest' # for Intel based macs.
             args: '--target x86_64-apple-darwin'
-            configArgs: '--config src-tauri/tauri.macos.conf.json'
           - platform: 'ubuntu-24.04' # for Tauri v1 you could replace this with ubuntu-20.04.
             args: ''
-            configArgs: ''
           - platform: 'windows-latest'
             args: ''
-            configArgs: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -50,6 +46,10 @@ jobs:
             gir1.2-webkit2-4.1=2.44.0-2
       - name: install frontend dependencies
         run: npm install # change this to npm or pnpm depending on which one you use
+      - name: apply macOS Tauri config override
+        if: matrix.platform == 'macos-latest'
+        run: |
+          node -e "const fs=require('fs'); const basePath='src-tauri/tauri.conf.json'; const overridePath='src-tauri/tauri.macos.conf.json'; const base=JSON.parse(fs.readFileSync(basePath,'utf8')); const override=JSON.parse(fs.readFileSync(overridePath,'utf8')); const merge=(a,b)=>{ if(Array.isArray(a)&&Array.isArray(b)) return b; if(a&&typeof a==='object'&&b&&typeof b==='object'){ const out={...a}; for(const k of Object.keys(b)){ out[k]=k in a ? merge(a[k], b[k]) : b[k]; } return out; } return b; }; fs.writeFileSync(basePath, JSON.stringify(merge(base, override), null, 2)+'\n');"
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,4 +72,4 @@ jobs:
             </details>
           releaseDraft: true
           prerelease: false
-          args: ${{ matrix.args }} ${{ matrix.configArgs }}
+          args: ${{ matrix.args }}
