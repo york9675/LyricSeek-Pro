@@ -66,14 +66,6 @@ jobs:
             > 
 
             </details>
-
-            ***
-
-            © 2026 York Development
-
-            Made with :heart: in Taiwan
-
-            Based on [LRCGET](https://github.com/tranxuanthang/lrcget) project.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
