@@ -22,13 +22,24 @@
           </div>
         </div>
 
-        <div>
+        <div class="flex items-center gap-2">
           <button class="button button-normal px-4 py-1.5 text-xs rounded-full" @click.prevent="downloadArtistLyrics">
             <div class="text-sm"><DownloadMultiple /></div>
             <span>
               Download artist lyrics
             </span>
           </button>
+          <a
+            v-if="lastfmArtistUrl"
+            :href="lastfmArtistUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="button button-normal p-2 rounded-full"
+            title="Open artist on Last.fm"
+            aria-label="Open artist on Last.fm"
+          >
+            <OpenInNew />
+          </a>
         </div>
       </div>
 
@@ -71,7 +82,7 @@
 </template>
 
 <script setup>
-import { ArrowLeft, DownloadMultiple } from 'mdue'
+import { ArrowLeft, DownloadMultiple, OpenInNew } from 'mdue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { ref, computed, watch, onMounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
@@ -102,6 +113,14 @@ const rowVirtualizer = useVirtualizer(
 const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
+
+const lastfmArtistUrl = computed(() => {
+  if (!props.artist?.name) {
+    return null
+  }
+  const encodedArtist = encodeURIComponent(props.artist.name)
+  return `https://www.last.fm/music/${encodedArtist}`
+})
 
 const playTrack = (track) => {
   emit('playTrack', track)

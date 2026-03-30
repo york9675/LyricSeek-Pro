@@ -17,10 +17,12 @@
 
       <AlbumList
         :isActive="activeTab === 'albums'"
+        :jumpRequest="albumJumpRequest"
       />
 
       <ArtistList
         :isActive="activeTab === 'artists'"
+        :jumpRequest="artistJumpRequest"
       />
 
       <MyLrclib
@@ -69,6 +71,8 @@ const isLoading = ref(true)
 const isInitializing = ref(false)
 const initializeProgress = ref(null)
 const activeTab = ref('tracks')
+const albumJumpRequest = ref(null)
+const artistJumpRequest = ref(null)
 let unlistenMenuOpenAbout = null
 let unlistenMenuOpenSettings = null
 
@@ -109,6 +113,30 @@ const changeActiveTab = (tab) => {
   activeTab.value = tab
 }
 
+const handleNowPlayingJump = (event) => {
+  const detail = event?.detail
+  if (!detail?.type) {
+    return
+  }
+
+  if (detail.type === 'album' && detail.albumName && detail.artistName) {
+    activeTab.value = 'albums'
+    albumJumpRequest.value = {
+      token: Date.now(),
+      albumName: detail.albumName,
+      artistName: detail.artistName
+    }
+  }
+
+  if (detail.type === 'artist' && detail.artistName) {
+    activeTab.value = 'artists'
+    artistJumpRequest.value = {
+      token: Date.now(),
+      artistName: detail.artistName
+    }
+  }
+}
+
 const refreshLibrary = async () => {
   isLoading.value = true
   isInitializing.value = true
@@ -136,6 +164,8 @@ onMounted(async () => {
   unlistenMenuOpenSettings = await listen('menu-open-settings', async () => {
     await openConfigModal()
   })
+
+  window.addEventListener('now-playing-open-library-target', handleNowPlayingJump)
 
   const init = await invoke('get_init')
   if (!init) {
@@ -168,5 +198,7 @@ onUnmounted(() => {
   if (unlistenMenuOpenSettings) {
     unlistenMenuOpenSettings()
   }
+
+  window.removeEventListener('now-playing-open-library-target', handleNowPlayingJump)
 })
 </script>

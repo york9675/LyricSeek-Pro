@@ -29,7 +29,6 @@
             <TrackItem
               :trackId="virtualRow.key"
               :showCover="showCoverArtInTrackList"
-              :lastfmLinksEnabled="lastfmLinksEnabled"
               @play-track="playTrack"
               @download-lyrics="downloadLyrics"
             />
@@ -54,7 +53,6 @@ const { showCoverArtInTrackList } = useGlobalState()
 
 const trackIds = ref([])
 const parentRef = ref(null)
-const lastfmLinksEnabled = ref(true)
 
 const rowVirtualizer = useVirtualizer(
   computed(() => ({
@@ -100,13 +98,6 @@ const getTrackIds = async () => {
 }
 
 onMounted(async () => {
-  try {
-    const config = await invoke('get_config')
-    lastfmLinksEnabled.value = config.lastfm_links_enabled
-  } catch (error) {
-    console.error('Failed to load config:', error)
-  }
-
   if (props.isActive) {
     await getTrackIds()
   }

@@ -43,7 +43,7 @@
               </span>
             </button>
             <a
-              v-if="lastfmLinksEnabled && lastfmAlbumUrl"
+              v-if="lastfmAlbumUrl"
               :href="lastfmAlbumUrl"
               target="_blank"
               rel="noopener noreferrer"
@@ -111,7 +111,6 @@ const { addToQueue } = useDownloader()
 const trackIds = ref([])
 const parentRef = ref(null)
 const coverImageUrl = ref(null)
-const lastfmLinksEnabled = ref(true)
 
 const rowVirtualizer = useVirtualizer(
   computed(() => ({
@@ -129,7 +128,7 @@ const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
 
 const lastfmAlbumUrl = computed(() => {
-  if (!props.album?.artist_name || !props.album?.name || !lastfmLinksEnabled.value) {
+  if (!props.album?.artist_name || !props.album?.name) {
     return null
   }
 
@@ -169,13 +168,6 @@ const downloadAlbumLyrics = async () => {
 }
 
 onMounted(async () => {
-  try {
-    const config = await invoke('get_config')
-    lastfmLinksEnabled.value = config.lastfm_links_enabled
-  } catch (error) {
-    console.error('Failed to load config:', error)
-  }
-
   trackIds.value = await invoke('get_album_track_ids', { albumId: props.album.id })
   loadCoverImage()
 })

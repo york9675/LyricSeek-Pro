@@ -11,7 +11,7 @@ use rusqlite::{named_params, params, Connection};
 use std::fs;
 use tauri::{AppHandle, Manager};
 
-const CURRENT_DB_VERSION: u32 = 13;
+const CURRENT_DB_VERSION: u32 = 14;
 
 /// Initializes the database connection, creating the .sqlite file if needed, and upgrading the database
 /// if it's out of date.
@@ -291,6 +291,26 @@ pub fn upgrade_database_if_needed(
 
             tx.commit()?;
         }
+
+                if existing_version <= 13 {
+                        println!("Migrate database version 14...");
+                        let tx = db.transaction()?;
+
+                        tx.pragma_update(None, "user_version", 14)?;
+
+                        tx.execute_batch(indoc! {"
+                        ALTER TABLE config_data ADD show_links BOOLEAN DEFAULT 1;
+                        ALTER TABLE config_data ADD links_target TEXT DEFAULT 'in_app';
+                        UPDATE config_data
+                        SET links_target = CASE
+                            WHEN lastfm_links_enabled = 1 THEN 'lastfm'
+                            ELSE 'in_app'
+                        END
+                        WHERE 1;
+                        "})?;
+
+                        tx.commit()?;
+                }
     }
 
     Ok(())
@@ -345,7 +365,9 @@ pub fn get_config(db: &Connection) -> Result<PersistentConfig> {
         lrclib_instance,
         providers_order,
         enabled_providers,
-        lastfm_links_enabled
+                lastfm_links_enabled,
+                show_links,
+                links_target
       FROM config_data
       LIMIT 1
     "})?;
@@ -369,6 +391,10 @@ pub fn get_config(db: &Connection) -> Result<PersistentConfig> {
                 .map(|raw| providers::parse_enabled_providers(&raw))
                 .unwrap_or_else(providers::default_enabled_providers),
             lastfm_links_enabled: r.get("lastfm_links_enabled").unwrap_or(true),
+            show_links: r.get("show_links").unwrap_or(true),
+            links_target: r
+                .get::<_, Option<String>>("links_target")?
+                .unwrap_or_else(|| "in_app".to_string()),
         })
     })?;
     Ok(row)
@@ -387,6 +413,8 @@ pub fn set_config(
     providers_order: &[String],
     enabled_providers: &[String],
     lastfm_links_enabled: bool,
+    show_links: bool,
+    links_target: &str,
     db: &Connection,
 ) -> Result<()> {
     let providers_order = providers::stringify_providers_order(providers_order);
@@ -406,7 +434,9 @@ pub fn set_config(
         lrclib_instance = ?,
         providers_order = ?,
         enabled_providers = ?,
-        lastfm_links_enabled = ?
+                lastfm_links_enabled = ?,
+                show_links = ?,
+                links_target = ?
       WHERE 1
     "})?;
     statement.execute((
@@ -422,6 +452,8 @@ pub fn set_config(
         providers_order,
         enabled_providers,
         lastfm_links_enabled,
+        show_links,
+        links_target,
     ))?;
     Ok(())
 }

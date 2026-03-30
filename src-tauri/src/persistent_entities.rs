@@ -51,4 +51,6 @@ pub struct PersistentConfig {
     pub providers_order: Vec<String>,
     pub enabled_providers: Vec<String>,
     pub lastfm_links_enabled: bool,
+    pub show_links: bool,
+    pub links_target: String,
 }
