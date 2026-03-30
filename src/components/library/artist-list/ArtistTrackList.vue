@@ -71,8 +71,6 @@
               :trackId="virtualRow.key"
               :isShowTrackNumber="true"
               :showCover="showCoverArtInTrackList"
-              @play-track="playTrack"
-              @download-lyrics="downloadLyrics"
             />
           </div>
         </div>
@@ -91,7 +89,7 @@ import { useDownloader } from '@/composables/downloader.js'
 import { useGlobalState } from '@/composables/global-state'
 
 const props = defineProps(['artist'])
-const emit = defineEmits(['back', 'playTrack', 'downloadLyrics'])
+const emit = defineEmits(['back'])
 
 const { addToQueue } = useDownloader()
 const { showCoverArtInTrackList } = useGlobalState()
@@ -121,14 +119,6 @@ const lastfmArtistUrl = computed(() => {
   const encodedArtist = encodeURIComponent(props.artist.name)
   return `https://www.last.fm/music/${encodedArtist}`
 })
-
-const playTrack = (track) => {
-  emit('playTrack', track)
-}
-
-const downloadLyrics = (track) => {
-  emit('downloadLyrics', track)
-}
 
 const downloadArtistLyrics = async () => {
   const config = await invoke('get_config')

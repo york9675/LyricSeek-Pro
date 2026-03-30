@@ -85,8 +85,6 @@
               :trackId="virtualRow.key"
               :isShowTrackNumber="true"
               :showCover="false"
-              @play-track="playTrack"
-              @download-lyrics="downloadLyrics"
             />
           </div>
         </div>
@@ -104,7 +102,7 @@ import TrackItem from '../track-list/TrackItem.vue'
 import { useDownloader } from '@/composables/downloader.js'
 
 const props = defineProps(['album'])
-const emit = defineEmits(['back', 'playTrack', 'downloadLyrics'])
+const emit = defineEmits(['back'])
 
 const { addToQueue } = useDownloader()
 
@@ -136,10 +134,6 @@ const lastfmAlbumUrl = computed(() => {
   const encodedAlbum = encodeURIComponent(props.album.name)
   return `https://www.last.fm/music/${encodedArtist}/${encodedAlbum}`
 })
-
-const downloadLyrics = (track) => {
-  emit('downloadLyrics', track)
-}
 
 const loadCoverImage = async () => {
   if (!props.album?.image_path) {

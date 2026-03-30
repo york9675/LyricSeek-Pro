@@ -37,7 +37,7 @@
         'w-[65%]': !isShowTrackNumber && !showCover,
         'w-[60%]': isShowTrackNumber && !showCover
       }"
-      @click="playTrack(track)"
+      @dblclick="playTrack(track)"
     >
       <div v-if="track">
         <div class="font-bold text-sm text-brave-20 flex items-center dark:text-brave-95">
@@ -89,12 +89,12 @@
     </div>
 
     <!-- Duration -->
-    <div class="flex-none w-[10%] flex items-center justify-end p-1" @click="playTrack(track)">
+    <div class="flex-none w-[10%] flex items-center justify-end p-1" @dblclick="playTrack(track)">
       <div v-if="track" class="text-brave-30 font-bold text-xs text-right dark:text-brave-95">{{ humanDuration(track.duration) }}</div>
     </div>
 
     <!-- Lyrics indication -->
-    <div class="flex-none w-[10%] flex items-center justify-center p-1" @click="playTrack(track)">
+    <div class="flex-none w-[10%] flex items-center justify-center p-1" @dblclick="playTrack(track)">
       <div v-if="track">
         <span v-if="track.instrumental" class="text-gray-200 font-bold text-[0.67rem] bg-gray-500 rounded px-1 py-0.5">Instrumental</span>
         <span v-else-if="track.lrc_lyrics" class="text-green-200 font-bold text-[0.67rem] bg-green-800 rounded px-1 py-0.5">Synced</span>

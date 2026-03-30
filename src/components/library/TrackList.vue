@@ -29,8 +29,6 @@
             <TrackItem
               :trackId="virtualRow.key"
               :showCover="showCoverArtInTrackList"
-              @play-track="playTrack"
-              @download-lyrics="downloadLyrics"
             />
           </div>
         </div>
@@ -48,7 +46,6 @@ import { useSearchLibrary } from '@/composables/search-library.js'
 import { useGlobalState } from '@/composables/global-state'
 
 const props = defineProps(['isActive'])
-const emit = defineEmits(['playTrack', 'downloadLyrics'])
 const { showCoverArtInTrackList } = useGlobalState()
 
 const trackIds = ref([])
@@ -70,14 +67,6 @@ const { searchValue, filters } = useSearchLibrary()
 const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
-
-const playTrack = (track) => {
-  emit('playTrack', track)
-}
-
-const downloadLyrics = (track) => {
-  emit('downloadLyrics', track)
-}
 
 const getTrackIds = async () => {
   trackIds.value = [];
