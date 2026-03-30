@@ -34,6 +34,7 @@ pub struct DownloadLyricsResult {
 pub async fn download_lyrics_for_track(
     track: PersistentTrack,
     is_try_embed_lyrics: bool,
+    embed_lyrics_only: bool,
     lrclib_instance: &str,
     providers_order: &[String],
     enabled_providers: &[String],
@@ -62,12 +63,15 @@ pub async fn download_lyrics_for_track(
                     track,
                     Response::UnsyncedLyrics(plain_lyrics),
                     is_try_embed_lyrics,
+                    embed_lyrics_only,
                 )
                 .await?;
                 return Ok(DownloadLyricsResult { lyrics, provider });
             }
             Ok(lyrics) => {
-                let lyrics = apply_lyrics_for_track(track, lyrics, is_try_embed_lyrics).await?;
+                let lyrics =
+                    apply_lyrics_for_track(track, lyrics, is_try_embed_lyrics, embed_lyrics_only)
+                        .await?;
                 return Ok(DownloadLyricsResult { lyrics, provider });
             }
             Err(error) => {
@@ -81,7 +85,9 @@ pub async fn download_lyrics_for_track(
     }
 
     if let Some((plain_lyrics, provider)) = fallback_plain {
-        let lyrics = apply_lyrics_for_track(track, plain_lyrics, is_try_embed_lyrics).await?;
+        let lyrics =
+            apply_lyrics_for_track(track, plain_lyrics, is_try_embed_lyrics, embed_lyrics_only)
+                .await?;
         return Ok(DownloadLyricsResult { lyrics, provider });
     }
 
@@ -93,9 +99,16 @@ pub async fn apply_string_lyrics_for_track(
     plain_lyrics: &str,
     synced_lyrics: &str,
     is_try_embed_lyrics: bool,
+    embed_lyrics_only: bool,
 ) -> Result<()> {
-    save_plain_lyrics(&track.file_path, plain_lyrics)?;
-    save_synced_lyrics(&track.file_path, synced_lyrics)?;
+    let should_embed_only = is_try_embed_lyrics && embed_lyrics_only;
+
+    if should_embed_only {
+        clear_sidecar_lyrics(&track.file_path)?;
+    } else {
+        save_plain_lyrics(&track.file_path, plain_lyrics)?;
+        save_synced_lyrics(&track.file_path, synced_lyrics)?;
+    }
 
     if is_try_embed_lyrics {
         embed_lyrics(&track.file_path, &plain_lyrics, &synced_lyrics);
@@ -108,28 +121,56 @@ pub async fn apply_lyrics_for_track(
     track: PersistentTrack,
     lyrics: Response,
     is_try_embed_lyrics: bool,
+    embed_lyrics_only: bool,
 ) -> Result<Response> {
+    let should_embed_only = is_try_embed_lyrics && embed_lyrics_only;
+
     match &lyrics {
         Response::SyncedLyrics(synced_lyrics, plain_lyrics) => {
-            save_synced_lyrics(&track.file_path, &synced_lyrics)?;
+            if should_embed_only {
+                clear_sidecar_lyrics(&track.file_path)?;
+            } else {
+                save_synced_lyrics(&track.file_path, &synced_lyrics)?;
+            }
             if is_try_embed_lyrics {
                 embed_lyrics(&track.file_path, &plain_lyrics, &synced_lyrics);
             }
             Ok(lyrics)
         }
         Response::UnsyncedLyrics(plain_lyrics) => {
-            save_plain_lyrics(&track.file_path, &plain_lyrics)?;
+            if should_embed_only {
+                clear_sidecar_lyrics(&track.file_path)?;
+            } else {
+                save_plain_lyrics(&track.file_path, &plain_lyrics)?;
+            }
             if is_try_embed_lyrics {
                 embed_lyrics(&track.file_path, &plain_lyrics, "");
             }
             Ok(lyrics)
         }
         Response::IsInstrumental => {
-            save_instrumental(&track.file_path)?;
+            if should_embed_only {
+                clear_sidecar_lyrics(&track.file_path)?;
+                if is_try_embed_lyrics {
+                    embed_lyrics(&track.file_path, "", "");
+                }
+            } else {
+                save_instrumental(&track.file_path)?;
+            }
             Ok(lyrics)
         }
         _ => Ok(lyrics),
     }
+}
+
+fn clear_sidecar_lyrics(track_path: &str) -> Result<()> {
+    let txt_path = build_txt_path(track_path)?;
+    let lrc_path = build_lrc_path(track_path)?;
+
+    let _ = remove_file(lrc_path);
+    let _ = remove_file(txt_path);
+
+    Ok(())
 }
 
 fn save_plain_lyrics(track_path: &str, lyrics: &str) -> Result<()> {

@@ -28,7 +28,7 @@ import { useToast } from 'vue-toastification'
 
 const appWindow = getCurrentWebviewWindow()
 const toast = useToast()
-const { themeMode, setThemeMode, setLrclibInstance } = useGlobalState()
+const { themeMode, setThemeMode, setLrclibInstance, setShowCoverArtInTrackList } = useGlobalState()
 const { downloadNext } = useDownloader()
 
 const loading = ref(true)
@@ -55,6 +55,7 @@ const loadGlobalState = async () => {
   const config = await invoke('get_config')
   setThemeMode(config.theme_mode)
   setLrclibInstance(config.lrclib_instance)
+  setShowCoverArtInTrackList(config.show_cover_art_in_track_list)
 }
 
 const drainNotifications = async () => {

@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 const isHotkeyState = ref(true)
 const themeModeState = ref('auto')
 const lrclibInstanceState = ref('')
+const showCoverArtInTrackListState = ref(true)
 
 export function useGlobalState() {
   const disableHotkey = () => {
@@ -21,8 +22,12 @@ export function useGlobalState() {
   const setLrclibInstance = (instance) => {
     lrclibInstanceState.value = instance
   }
+  const setShowCoverArtInTrackList = (isEnabled) => {
+    showCoverArtInTrackListState.value = isEnabled
+  }
 
   const lrclibInstance = computed(() => lrclibInstanceState.value)
+  const showCoverArtInTrackList = computed(() => showCoverArtInTrackListState.value)
 
   const themeMode = computed(() => themeModeState.value)
 
@@ -33,6 +38,8 @@ export function useGlobalState() {
     setThemeMode,
     themeMode,
     setLrclibInstance,
-    lrclibInstance
+    lrclibInstance,
+    setShowCoverArtInTrackList,
+    showCoverArtInTrackList
   }
 }

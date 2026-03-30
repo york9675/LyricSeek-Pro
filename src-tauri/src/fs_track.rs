@@ -349,7 +349,16 @@ pub fn load_tracks_from_directories(
             directory
         ))?;
         for item in globwalker {
-            let entry = item?;
+            let entry = match item {
+                Ok(entry) => entry,
+                Err(err) => {
+                    println!(
+                        "Skipping unreadable path while scanning '{}': {}",
+                        directory, err
+                    );
+                    continue;
+                }
+            };
             entry_batch.push(entry);
             if entry_batch.len() == 100 {
                 let tracks = load_tracks_from_entry_batch(&entry_batch)?;
@@ -395,7 +404,11 @@ pub fn count_files_from_directories(directories: &Vec<String>) -> Result<usize> 
             "{}/**/*.{{mp3,m4a,flac,ogg,opus,wav,MP3,M4A,FLAC,OGG,OPUS,WAV}}",
             directory
         ))?;
-        files_count += files_in_dir.into_iter().count();
+        for item in files_in_dir {
+            if item.is_ok() {
+                files_count += 1;
+            }
+        }
     }
 
     Ok(files_count)

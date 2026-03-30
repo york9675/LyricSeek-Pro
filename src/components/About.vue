@@ -7,17 +7,34 @@
     <div class="overflow-auto text-sm">
       <div class="mb-6">
         <label class="group-label mb-2">Project</label>
-        <div class="mb-1"><span class="font-bold">LyricSeek Pro</span></div>
-        <div>
-          Desktop lyrics tool with multi-provider support for your offline music library.
-          <br>
-          <br>
-          LyricSeek Pro is a modified version of <a href="https://github.com/tranxuanthang/lrcget" class="link" target="_blank">tranxuanthang/lrcget</a>.
+        <div class="rounded-xl border border-brave-90 dark:border-brave-20 bg-gradient-to-br from-brave-98 to-brave-95 dark:from-brave-10 dark:to-brave-5 p-3 mb-3">
+          <div class="flex items-center gap-3">
+            <div class="rounded-xl">
+              <img
+                src="/src-tauri/icons/icon.png"
+                alt="LyricSeek Pro icon"
+                class="w-12 h-12"
+              >
+            </div>
+            <div class="min-w-0">
+              <div class="font-extrabold text-base tracking-wide text-brave-20 dark:text-brave-95">LyricSeek Pro</div>
+              <div class="text-xs text-brave-40 dark:text-brave-70">Desktop lyrics companion for offline music libraries</div>
+            </div>
+          </div>
+
+          <div class="mt-3 leading-relaxed">
+            LyricSeek Pro is a desktop utility for downloading synced or plain lyrics with support for multiple providers for your offline music library.
+          </div>
+
+          <div class="mt-3 text-sm">
+            LyricSeek Pro is a modified version of
+            <a href="https://github.com/tranxuanthang/lrcget" class="link" target="_blank">tranxuanthang/lrcget</a>.
+          </div>
         </div>
         <div>
-        <details class="rounded-lg border border-brave-90 dark:border-brave-20 bg-brave-98 dark:bg-brave-5 p-3">
-          <summary class="cursor-pointer font-semibold">License (tranxuanthang/lrcget)</summary>
-          <pre class="whitespace-pre-wrap text-xs mt-3 max-h-72 overflow-auto">
+          <details class="rounded-lg border border-brave-90 dark:border-brave-20 bg-brave-98 dark:bg-brave-5 p-3">
+            <summary class="cursor-pointer font-semibold">License (tranxuanthang/lrcget)</summary>
+            <pre class="whitespace-pre-wrap text-xs mt-3 max-h-72 overflow-auto">
 MIT License
 
 Copyright (c) 2023 tranxuanthang
@@ -27,9 +44,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-          </pre>
-        </details>
-      </div>
+            </pre>
+          </details>
+        </div>
       </div>
 
       <div class="mb-6">

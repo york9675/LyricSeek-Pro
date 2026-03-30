@@ -28,6 +28,8 @@
           >
             <TrackItem
               :trackId="virtualRow.key"
+              :showCover="showCoverArtInTrackList"
+              :lastfmLinksEnabled="lastfmLinksEnabled"
               @play-track="playTrack"
               @download-lyrics="downloadLyrics"
             />
@@ -44,12 +46,15 @@ import { useVirtualizer } from '@tanstack/vue-virtual'
 import { ref, computed, watch, onMounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { useSearchLibrary } from '@/composables/search-library.js'
+import { useGlobalState } from '@/composables/global-state'
 
 const props = defineProps(['isActive'])
 const emit = defineEmits(['playTrack', 'downloadLyrics'])
+const { showCoverArtInTrackList } = useGlobalState()
 
 const trackIds = ref([])
 const parentRef = ref(null)
+const lastfmLinksEnabled = ref(true)
 
 const rowVirtualizer = useVirtualizer(
   computed(() => ({
@@ -95,6 +100,13 @@ const getTrackIds = async () => {
 }
 
 onMounted(async () => {
+  try {
+    const config = await invoke('get_config')
+    lastfmLinksEnabled.value = config.lastfm_links_enabled
+  } catch (error) {
+    console.error('Failed to load config:', error)
+  }
+
   if (props.isActive) {
     await getTrackIds()
   }

@@ -27,6 +27,9 @@ It scans tracks in your selected directory and saves lyrics beside each song, wi
 > [!Note]\
 > This project is a modified version of the original [LRCGET](https://github.com/tranxuanthang/lrcget) app.
 
+> [!Important]\
+> The stable branch is [`release`](https://github.com/york9675/LyricSeek-Pro/tree/release). The [`main`](https://github.com/york9675/LyricSeek-Pro/tree/main) branch may contain in-progress or unstable development changes.
+
 ## Table of Contents
 
 <details>
@@ -75,16 +78,22 @@ Get the latest version from the [releases page](https://github.com/york9675/Lyri
 
 ### Windows
 
-- Installer builds are available in the latest release assets.
-
-### Linux
-
-- Flatpak build is recommended for most distros.
-- Deb and AppImage packages are also available in release assets.
+Download one of these assets from the latest release
+- `LyricSeek.Pro_x.x.x_x64-setup.exe` - Standard installer (recommended for most users).
+- `LyricSeek.Pro_x.x.x_x64_en-US.msi` - Windows Installer package
 
 ### macOS
 
-- Intel and Apple Silicon builds are available in release assets.
+Download the DMG that matches your device
+- `LyricSeek.Pro_x.x.x_aarch64.dmg` - For Apple Silicon
+- `LyricSeek.Pro_x.x.x_x64.dmg` - For Intel-based Macs
+
+### Linux
+
+Linux assets in releases include
+- `LyricSeek.Pro_x.x.x_amd64.AppImage` - Portable app, no installation required.
+- `lyricseek-pro_x.x.x_amd64.deb` - For Debian/Ubuntu and other Debian-based distros.
+- `lyricseek-pro-x.x.x-1.x86_64.rpm` - For Fedora/RHEL/openSUSE and other RPM-based distros.
 
 ## How To Use
 
