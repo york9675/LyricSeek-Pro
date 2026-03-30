@@ -174,7 +174,7 @@
             name="lastfm-links"
             id="lastfm-links"
           >
-            Enable Last.fm links on player bar (title, artist, album)
+            Enable Last.fm links
           </CheckboxButton>
         </div>
       </div>

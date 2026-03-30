@@ -36,12 +36,23 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button class="button button-normal px-4 py-1.5 text-xs rounded-full" @click.prevent="downloadAlbumLyrics">
+            <button class="button button-normal px-4 py-2 text-xs rounded-full" @click.prevent="downloadAlbumLyrics">
               <div class="text-sm"><DownloadMultiple /></div>
               <span>
                 Download album lyrics
               </span>
             </button>
+            <a
+              v-if="lastfmLinksEnabled && lastfmAlbumUrl"
+              :href="lastfmAlbumUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="button button-normal p-2 rounded-full"
+              title="Open album on Last.fm"
+              aria-label="Open album on Last.fm"
+            >
+              <OpenInNew />
+            </a>
           </div>
         </div>
       </div>
@@ -85,7 +96,7 @@
 </template>
 
 <script setup>
-import { ArrowLeft, DownloadMultiple, Play } from 'mdue'
+import { ArrowLeft, DownloadMultiple, OpenInNew } from 'mdue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
@@ -100,6 +111,7 @@ const { addToQueue } = useDownloader()
 const trackIds = ref([])
 const parentRef = ref(null)
 const coverImageUrl = ref(null)
+const lastfmLinksEnabled = ref(true)
 
 const rowVirtualizer = useVirtualizer(
   computed(() => ({
@@ -115,6 +127,16 @@ const rowVirtualizer = useVirtualizer(
 const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
+
+const lastfmAlbumUrl = computed(() => {
+  if (!props.album?.artist_name || !props.album?.name || !lastfmLinksEnabled.value) {
+    return null
+  }
+
+  const encodedArtist = encodeURIComponent(props.album.artist_name)
+  const encodedAlbum = encodeURIComponent(props.album.name)
+  return `https://www.last.fm/music/${encodedArtist}/${encodedAlbum}`
+})
 
 const downloadLyrics = (track) => {
   emit('downloadLyrics', track)
@@ -147,6 +169,13 @@ const downloadAlbumLyrics = async () => {
 }
 
 onMounted(async () => {
+  try {
+    const config = await invoke('get_config')
+    lastfmLinksEnabled.value = config.lastfm_links_enabled
+  } catch (error) {
+    console.error('Failed to load config:', error)
+  }
+
   trackIds.value = await invoke('get_album_track_ids', { albumId: props.album.id })
   loadCoverImage()
 })
