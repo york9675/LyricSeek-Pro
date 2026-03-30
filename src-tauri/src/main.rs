@@ -89,7 +89,9 @@ async fn set_config(
     skip_tracks_with_synced_lyrics: bool,
     skip_tracks_with_plain_lyrics: bool,
     show_line_count: bool,
+    show_cover_art_in_track_list: bool,
     try_embed_lyrics: bool,
+    embed_lyrics_only: bool,
     prefer_synced_lyrics: bool,
     theme_mode: &str,
     lrclib_instance: &str,
@@ -104,7 +106,9 @@ async fn set_config(
         skip_tracks_with_synced_lyrics,
         skip_tracks_with_plain_lyrics,
         show_line_count,
+        show_cover_art_in_track_list,
         try_embed_lyrics,
+        embed_lyrics_only,
         prefer_synced_lyrics,
         theme_mode,
         lrclib_instance,
@@ -324,6 +328,7 @@ async fn download_lyrics(track_id: i64, app_handle: AppHandle) -> Result<String,
     let download_result = lyrics::download_lyrics_for_track(
         track,
         config.try_embed_lyrics,
+        config.embed_lyrics_only,
         &config.lrclib_instance,
         &config.providers_order,
         &config.enabled_providers,
@@ -370,13 +375,17 @@ async fn apply_lyrics(
     let track = app_handle
         .db(|db| db::get_track_by_id(track_id, db))
         .map_err(|err| err.to_string())?;
-    let is_try_embed_lyrics = app_handle
+    let config = app_handle
         .db(|db| db::get_config(db))
-        .map_err(|err| err.to_string())?
-        .try_embed_lyrics;
+        .map_err(|err| err.to_string())?;
 
     let lyrics = lrclib::get::Response::from_raw_response(lrclib_response);
-    let lyrics = lyrics::apply_lyrics_for_track(track, lyrics, is_try_embed_lyrics)
+    let lyrics = lyrics::apply_lyrics_for_track(
+        track,
+        lyrics,
+        config.try_embed_lyrics,
+        config.embed_lyrics_only,
+    )
         .await
         .map_err(|err| err.to_string())?;
 
@@ -520,7 +529,12 @@ async fn apply_search_result_lyrics(
     let provider_name = providers::provider_display_name(&resolved_item.provider);
 
     let lyrics_response = providers::response_from_search_item(&resolved_item);
-    let lyrics = lyrics::apply_lyrics_for_track(track, lyrics_response, config.try_embed_lyrics)
+    let lyrics = lyrics::apply_lyrics_for_track(
+        track,
+        lyrics_response,
+        config.try_embed_lyrics,
+        config.embed_lyrics_only,
+    )
         .await
         .map_err(|err| err.to_string())?;
 
@@ -561,10 +575,9 @@ async fn save_lyrics(
     let track = app_handle
         .db(|db| db::get_track_by_id(track_id, db))
         .map_err(|err| err.to_string())?;
-    let is_try_embed_lyrics = app_handle
+    let config = app_handle
         .db(|db| db::get_config(db))
-        .map_err(|err| err.to_string())?
-        .try_embed_lyrics;
+        .map_err(|err| err.to_string())?;
 
     // Create a regex to match "[au: instrumental]" or "[au:instrumental]"
     let re = Regex::new(r"\[au:\s*instrumental\]").expect("Invalid regex");
@@ -574,7 +587,8 @@ async fn save_lyrics(
         &track,
         &plain_lyrics,
         &synced_lyrics,
-        is_try_embed_lyrics,
+        config.try_embed_lyrics,
+        config.embed_lyrics_only,
     )
     .await
     .map_err(|err| err.to_string())?;

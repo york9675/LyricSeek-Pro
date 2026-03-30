@@ -28,6 +28,7 @@
           >
             <TrackItem
               :trackId="virtualRow.key"
+              :showCover="showCoverArtInTrackList"
               @play-track="playTrack"
               @download-lyrics="downloadLyrics"
             />
@@ -44,9 +45,11 @@ import { useVirtualizer } from '@tanstack/vue-virtual'
 import { ref, computed, watch, onMounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { useSearchLibrary } from '@/composables/search-library.js'
+import { useGlobalState } from '@/composables/global-state'
 
 const props = defineProps(['isActive'])
 const emit = defineEmits(['playTrack', 'downloadLyrics'])
+const { showCoverArtInTrackList } = useGlobalState()
 
 const trackIds = ref([])
 const parentRef = ref(null)

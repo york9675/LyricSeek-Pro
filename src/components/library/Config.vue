@@ -62,6 +62,15 @@
             >
               Prefer synced lyrics first across providers (fallback to plain lyrics if needed)
           </CheckboxButton>
+
+          <CheckboxButton
+              class="mt-2"
+              v-model="showCoverArtInTrackList"
+              name="show-cover-art-in-track-list"
+              id="show-cover-art-in-track-list"
+            >
+              Show cover art in track list
+          </CheckboxButton>
         </div>
 
         <div class="flex flex-col mb-4">
@@ -185,6 +194,17 @@
             </div>
           </CheckboxButton>
         </div>
+
+        <div class="flex items-start mt-2 ml-6">
+          <CheckboxButton
+            v-model="embedLyricsOnly"
+            name="embed-lyrics-only"
+            id="embed-lyrics-only"
+            :disabled="!tryEmbedLyrics"
+          >
+            Embed lyrics to track file only (do not create .txt/.lrc sidecar files)
+          </CheckboxButton>
+        </div>
       </div>
 
       <div class="flex flex-col gap-1">
@@ -206,7 +226,7 @@ import { useGlobalState } from '../../composables/global-state'
 import RadioButton from '@/components/common/RadioButton.vue'
 import CheckboxButton from '@/components/common/CheckboxButton.vue'
 
-const { setThemeMode, setLrclibInstance } = useGlobalState()
+const { setThemeMode, setLrclibInstance, setShowCoverArtInTrackList } = useGlobalState()
 
 const emit = defineEmits(['close', 'refreshLibrary', 'uninitializeLibrary'])
 
@@ -214,7 +234,9 @@ const downloadLyricsFor = ref('skipPlain')
 const skipTracksWithSyncedLyrics = ref(true)
 const skipTracksWithPlainLyrics = ref(true)
 const showLineCount = ref(true)
+const showCoverArtInTrackList = ref(true)
 const tryEmbedLyrics = ref(true)
+const embedLyricsOnly = ref(false)
 const preferSyncedLyrics = ref(true)
 const lastfmLinksEnabled = ref(true)
 const editingThemeMode = ref('light')
@@ -309,7 +331,9 @@ const save = async () => {
     skipTracksWithSyncedLyrics: skipTracksWithSyncedLyrics.value,
     skipTracksWithPlainLyrics: skipTracksWithPlainLyrics.value,
     showLineCount: showLineCount.value,
+    showCoverArtInTrackList: showCoverArtInTrackList.value,
     tryEmbedLyrics: tryEmbedLyrics.value,
+    embedLyricsOnly: embedLyricsOnly.value,
     preferSyncedLyrics: preferSyncedLyrics.value,
     themeMode: editingThemeMode.value,
     lrclibInstance: editingLrclibInstance.value,
@@ -319,6 +343,7 @@ const save = async () => {
   })
   setThemeMode(editingThemeMode.value)
   setLrclibInstance(editingLrclibInstance.value)
+  setShowCoverArtInTrackList(showCoverArtInTrackList.value)
   emit('close')
 }
 
@@ -346,7 +371,9 @@ const beforeOpenHandler = async () => {
   }
 
   showLineCount.value = config.show_line_count
+  showCoverArtInTrackList.value = config.show_cover_art_in_track_list
   tryEmbedLyrics.value = config.try_embed_lyrics
+  embedLyricsOnly.value = config.embed_lyrics_only || false
   preferSyncedLyrics.value = config.prefer_synced_lyrics
   lastfmLinksEnabled.value = config.lastfm_links_enabled
   editingThemeMode.value = config.theme_mode
@@ -365,6 +392,12 @@ watch(downloadLyricsFor, (newVal) => {
   } else {
     skipTracksWithSyncedLyrics.value = false
     skipTracksWithPlainLyrics.value = false
+  }
+})
+
+watch(tryEmbedLyrics, (enabled) => {
+  if (!enabled) {
+    embedLyricsOnly.value = false
   }
 })
 </script>
