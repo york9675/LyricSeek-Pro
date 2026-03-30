@@ -44,7 +44,16 @@ import { useVirtualizer } from '@tanstack/vue-virtual'
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 
-const props = defineProps(['isActive'])
+const props = defineProps({
+  isActive: {
+    type: Boolean,
+    default: false
+  },
+  jumpRequest: {
+    type: Object,
+    default: null
+  }
+})
 
 const albumIds = ref([])
 const parentRef = ref(null)
@@ -69,6 +78,23 @@ const openAlbum = async (album) => {
   currentAlbum.value = album
 }
 
+const openAlbumByRequest = async (request) => {
+  if (!request?.albumName || !request?.artistName) {
+    return
+  }
+
+  const albums = await invoke('get_albums')
+  const targetAlbum = albums.find((album) => {
+    const albumName = String(album?.name || '').toLowerCase().trim()
+    const artistName = String(album?.artist_name || '').toLowerCase().trim()
+    return albumName === request.albumName.toLowerCase().trim() && artistName === request.artistName.toLowerCase().trim()
+  })
+
+  if (targetAlbum) {
+    currentAlbum.value = targetAlbum
+  }
+}
+
 onMounted(async () => {
   if (props.isActive) {
     albumIds.value = await invoke('get_album_ids')
@@ -78,6 +104,12 @@ onMounted(async () => {
 watch(() => props.isActive, async () => {
   if (props.isActive) {
     albumIds.value = await invoke('get_album_ids')
+  }
+})
+
+watch(() => props.jumpRequest?.token, async () => {
+  if (props.jumpRequest) {
+    await openAlbumByRequest(props.jumpRequest)
   }
 })
 </script>

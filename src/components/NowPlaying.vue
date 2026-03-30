@@ -24,14 +24,28 @@
           <div class="flex flex-col justify-center items-start gap-0.5 min-w-0 flex-1">
             <div v-if="playingTrack">
               <div class="text-xs font-bold text-brave-30 dark:text-brave-95 line-clamp-1">
-                <a v-if="lastfmLinksEnabled && lastfmAlbumUrl" :href="lastfmAlbumUrl" target="_blank" rel="noopener noreferrer" class="link hover:underline">{{ playingTrack.title }}</a>
+                <a v-if="useLastfmLinks && lastfmTrackUrl" :href="lastfmTrackUrl" target="_blank" rel="noopener noreferrer" class="link hover:underline">{{ playingTrack.title }}</a>
                 <span v-else>{{ playingTrack.title }}</span>
               </div>
               <div class="text-xs text-brave-40 dark:text-brave-90 line-clamp-1">
-                <a v-if="lastfmLinksEnabled && lastfmAlbumUrl" :href="lastfmAlbumUrl" target="_blank" rel="noopener noreferrer" class="link hover:underline">{{ playingTrack.album_name }}</a>
+                <a v-if="useLastfmLinks && lastfmAlbumUrl" :href="lastfmAlbumUrl" target="_blank" rel="noopener noreferrer" class="link hover:underline">{{ playingTrack.album_name }}</a>
+                <span
+                  v-else-if="useInAppLinks"
+                  class="link hover:underline cursor-pointer"
+                  @click="openAlbumPage"
+                >
+                  {{ playingTrack.album_name }}
+                </span>
                 <span v-else>{{ playingTrack.album_name }}</span>
                 <span> - </span>
-                <a v-if="lastfmLinksEnabled && lastfmArtistUrl" :href="lastfmArtistUrl" target="_blank" rel="noopener noreferrer" class="link hover:underline">{{ playingTrack.artist_name }}</a>
+                <a v-if="useLastfmLinks && lastfmArtistUrl" :href="lastfmArtistUrl" target="_blank" rel="noopener noreferrer" class="link hover:underline">{{ playingTrack.artist_name }}</a>
+                <span
+                  v-else-if="useInAppLinks"
+                  class="link hover:underline cursor-pointer"
+                  @click="openArtistPage"
+                >
+                  {{ playingTrack.artist_name }}
+                </span>
                 <span v-else>{{ playingTrack.artist_name }}</span>
               </div>
             </div>
@@ -71,7 +85,8 @@ const { isHotkey } = useGlobalState()
 const { playingTrack, status, duration, progress, volume, playTrack, pause, resume, seek, setVolume: setPlayerVolume } = usePlayer()
 const keydownEvent = ref(null)
 const coverImageUrl = ref(null)
-const lastfmLinksEnabled = ref(true)
+const showLinks = ref(true)
+const linksTarget = ref('in_app')
 
 const instrumental = computed(() => {
   if (!playingTrack.value) {
@@ -112,7 +127,7 @@ const reverse10 = computed(() => {
 })
 
 const lastfmArtistUrl = computed(() => {
-  if (!playingTrack.value?.artist_name || !lastfmLinksEnabled.value) {
+  if (!playingTrack.value?.artist_name || !useLastfmLinks.value) {
     return null
   }
   const encodedArtist = encodeURIComponent(playingTrack.value.artist_name)
@@ -120,12 +135,29 @@ const lastfmArtistUrl = computed(() => {
 })
 
 const lastfmAlbumUrl = computed(() => {
-  if (!playingTrack.value?.album_name || !playingTrack.value?.artist_name || !lastfmLinksEnabled.value) {
+  if (!playingTrack.value?.album_name || !playingTrack.value?.artist_name || !useLastfmLinks.value) {
     return null
   }
   const encodedArtist = encodeURIComponent(playingTrack.value.artist_name)
   const encodedAlbum = encodeURIComponent(playingTrack.value.album_name)
   return `https://www.last.fm/music/${encodedArtist}/${encodedAlbum}`
+})
+
+const lastfmTrackUrl = computed(() => {
+  if (!playingTrack.value?.artist_name || !playingTrack.value?.title || !useLastfmLinks.value) {
+    return null
+  }
+  const encodedArtist = encodeURIComponent(playingTrack.value.artist_name)
+  const encodedTitle = encodeURIComponent(playingTrack.value.title)
+  return `https://www.last.fm/music/${encodedArtist}/_/${encodedTitle}`
+})
+
+const useLastfmLinks = computed(() => {
+  return showLinks.value && linksTarget.value === 'lastfm'
+})
+
+const useInAppLinks = computed(() => {
+  return showLinks.value && linksTarget.value === 'in_app'
 })
 
 const setVolume = (event) => {
@@ -135,6 +167,39 @@ const setVolume = (event) => {
 
 const lyricsClicked = (line) => {
   seek(line.timestamp)
+}
+
+const openAlbumPage = () => {
+  if (!playingTrack.value?.album_name || !playingTrack.value?.artist_name || !useInAppLinks.value) {
+    return
+  }
+
+  window.dispatchEvent(new CustomEvent('now-playing-open-library-target', {
+    detail: {
+      type: 'album',
+      albumName: playingTrack.value.album_name,
+      artistName: playingTrack.value.artist_name
+    }
+  }))
+}
+
+const openArtistPage = () => {
+  if (!playingTrack.value?.artist_name || !useInAppLinks.value) {
+    return
+  }
+
+  window.dispatchEvent(new CustomEvent('now-playing-open-library-target', {
+    detail: {
+      type: 'artist',
+      artistName: playingTrack.value.artist_name
+    }
+  }))
+}
+
+const handleConfigUpdated = (event) => {
+  const detail = event?.detail || {}
+  showLinks.value = detail.showLinks ?? true
+  linksTarget.value = detail.linksTarget || 'in_app'
 }
 
 const loadCoverImage = async () => {
@@ -164,15 +229,19 @@ onUnmounted(async () => {
   if (coverImageUrl.value) {
     URL.revokeObjectURL(coverImageUrl.value)
   }
+  window.removeEventListener('config-updated', handleConfigUpdated)
 })
 
 onMounted(async () => {
   try {
     const config = await invoke('get_config')
-    lastfmLinksEnabled.value = config.lastfm_links_enabled
+    showLinks.value = config.show_links ?? true
+    linksTarget.value = config.links_target || 'in_app'
   } catch (error) {
     console.error('Failed to load config:', error)
   }
+
+  window.addEventListener('config-updated', handleConfigUpdated)
 
   keydownEvent.value = document.addEventListener('keydown', (event) => {
     if (!isHotkey.value) {

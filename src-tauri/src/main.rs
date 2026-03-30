@@ -98,6 +98,8 @@ async fn set_config(
     providers_order: Vec<String>,
     enabled_providers: Vec<String>,
     lastfm_links_enabled: bool,
+    show_links: bool,
+    links_target: &str,
     app_state: State<'_, AppState>,
 ) -> Result<(), String> {
     let conn_guard = app_state.db.lock().unwrap();
@@ -115,6 +117,8 @@ async fn set_config(
         &providers_order,
         &enabled_providers,
         lastfm_links_enabled,
+        show_links,
+        links_target,
         conn,
     )
     .map_err(|err| err.to_string())?;

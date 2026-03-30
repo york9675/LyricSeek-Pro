@@ -85,8 +85,8 @@ Download one of these assets from the latest release
 ### macOS
 
 Download the DMG that matches your device
-- `LyricSeek.Pro_x.x.x_aarch64.dmg` - For Apple Silicon
-- `LyricSeek.Pro_x.x.x_x64.dmg` - For Intel-based Macs
+- `LyricSeek.Pro_x.x.x_aarch64.dmg` - For Apple Silicon based Macs
+- `LyricSeek.Pro_x.x.x_x64.dmg` - For Intel based Macs
 
 ### Linux
 

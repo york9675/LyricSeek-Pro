@@ -1,0 +1,25 @@
+{
+  "identifier": "com.yorkdev.lyricseekpro",
+  "bundle": {
+    "icon": [
+        "icons/macos/icon.icns"
+    ],
+    "macOS": {
+      "dmg": {
+        "background": "../packaging/macos/dmg-background.png",
+        "windowSize": {
+          "width": 660,
+          "height": 400
+        },
+        "appPosition": {
+          "x": 180,
+          "y": 200
+        },
+        "applicationFolderPosition": {
+          "x": 480,
+          "y": 200
+        }
+      }
+    }
+  }
+}

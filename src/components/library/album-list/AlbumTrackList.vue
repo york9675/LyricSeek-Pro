@@ -43,7 +43,7 @@
               </span>
             </button>
             <a
-              v-if="lastfmLinksEnabled && lastfmAlbumUrl"
+              v-if="lastfmAlbumUrl"
               :href="lastfmAlbumUrl"
               target="_blank"
               rel="noopener noreferrer"
@@ -85,8 +85,6 @@
               :trackId="virtualRow.key"
               :isShowTrackNumber="true"
               :showCover="false"
-              @play-track="playTrack"
-              @download-lyrics="downloadLyrics"
             />
           </div>
         </div>
@@ -104,14 +102,13 @@ import TrackItem from '../track-list/TrackItem.vue'
 import { useDownloader } from '@/composables/downloader.js'
 
 const props = defineProps(['album'])
-const emit = defineEmits(['back', 'playTrack', 'downloadLyrics'])
+const emit = defineEmits(['back'])
 
 const { addToQueue } = useDownloader()
 
 const trackIds = ref([])
 const parentRef = ref(null)
 const coverImageUrl = ref(null)
-const lastfmLinksEnabled = ref(true)
 
 const rowVirtualizer = useVirtualizer(
   computed(() => ({
@@ -129,7 +126,7 @@ const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize())
 
 const lastfmAlbumUrl = computed(() => {
-  if (!props.album?.artist_name || !props.album?.name || !lastfmLinksEnabled.value) {
+  if (!props.album?.artist_name || !props.album?.name) {
     return null
   }
 
@@ -137,10 +134,6 @@ const lastfmAlbumUrl = computed(() => {
   const encodedAlbum = encodeURIComponent(props.album.name)
   return `https://www.last.fm/music/${encodedArtist}/${encodedAlbum}`
 })
-
-const downloadLyrics = (track) => {
-  emit('downloadLyrics', track)
-}
 
 const loadCoverImage = async () => {
   if (!props.album?.image_path) {
@@ -169,13 +162,6 @@ const downloadAlbumLyrics = async () => {
 }
 
 onMounted(async () => {
-  try {
-    const config = await invoke('get_config')
-    lastfmLinksEnabled.value = config.lastfm_links_enabled
-  } catch (error) {
-    console.error('Failed to load config:', error)
-  }
-
   trackIds.value = await invoke('get_album_track_ids', { albumId: props.album.id })
   loadCoverImage()
 })

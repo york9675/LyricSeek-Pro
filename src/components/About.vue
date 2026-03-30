@@ -82,13 +82,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         <label class="group-label mb-2">Developer</label>
         <div class="mb-1">Developer: <a href="https://github.com/york9675/" class="link" target="_blank">york9675</a></div>
         <div class="mb-1">
+          Support: <a href="https://buymeacoffee.com/york0524" class="link" target="_blank">https://buymeacoffee.com/york0524</a>
+        </div>
+        <div class="mb-1">
           Contact: <a href="mailto:york@york.qzz.io" class="link" target="_blank">york@york.qzz.io</a>
         </div>
-      </div>
-
-      <div class="mb-6">
-        <label class="group-label mb-2">Support</label>
-        <a href="https://buymeacoffee.com/york0524" class="link" target="_blank">https://buymeacoffee.com/york0524</a>
       </div>
 
     </div>

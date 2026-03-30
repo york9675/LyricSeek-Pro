@@ -44,7 +44,16 @@ import { listen } from '@tauri-apps/api/event'
 import ArtistItem from './artist-list/ArtistItem.vue'
 import ArtistTrackList from './artist-list/ArtistTrackList.vue'
 
-const props = defineProps(['isActive'])
+const props = defineProps({
+  isActive: {
+    type: Boolean,
+    default: false
+  },
+  jumpRequest: {
+    type: Object,
+    default: null
+  }
+})
 
 const artistIds = ref([])
 const parentRef = ref(null)
@@ -69,6 +78,22 @@ const openArtist = async (artist) => {
   currentArtist.value = artist
 }
 
+const openArtistByRequest = async (request) => {
+  if (!request?.artistName) {
+    return
+  }
+
+  const artists = await invoke('get_artists')
+  const targetArtist = artists.find((artist) => {
+    const artistName = String(artist?.name || '').toLowerCase().trim()
+    return artistName === request.artistName.toLowerCase().trim()
+  })
+
+  if (targetArtist) {
+    currentArtist.value = targetArtist
+  }
+}
+
 onMounted(async () => {
   if (props.isActive) {
     artistIds.value = await invoke('get_artist_ids')
@@ -78,6 +103,12 @@ onMounted(async () => {
 watch(() => props.isActive, async () => {
   if (props.isActive) {
     artistIds.value = await invoke('get_artist_ids')
+  }
+})
+
+watch(() => props.jumpRequest?.token, async () => {
+  if (props.jumpRequest) {
+    await openArtistByRequest(props.jumpRequest)
   }
 })
 </script>

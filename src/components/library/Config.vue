@@ -166,16 +166,35 @@
       </div>
 
       <div>
-        <label class="group-label mb-4">External Links</label>
+        <label class="group-label mb-4">Links</label>
 
         <div class="flex items-start">
           <CheckboxButton
-            v-model="lastfmLinksEnabled"
-            name="lastfm-links"
-            id="lastfm-links"
+            v-model="showLinks"
+            name="show-links"
+            id="show-links"
           >
-            Enable Last.fm links
+            Show links
           </CheckboxButton>
+        </div>
+
+        <div v-if="showLinks" class="flex flex-col gap-2 mt-2 ml-6">
+          <RadioButton
+            v-model="linksTarget"
+            value="in_app"
+            name="links-target"
+            id="links-target-in-app"
+          >
+            In app
+          </RadioButton>
+          <RadioButton
+            v-model="linksTarget"
+            value="lastfm"
+            name="links-target"
+            id="links-target-lastfm"
+          >
+            Last.fm
+          </RadioButton>
         </div>
       </div>
 
@@ -238,7 +257,8 @@ const showCoverArtInTrackList = ref(true)
 const tryEmbedLyrics = ref(true)
 const embedLyricsOnly = ref(false)
 const preferSyncedLyrics = ref(true)
-const lastfmLinksEnabled = ref(true)
+const showLinks = ref(true)
+const linksTarget = ref('in_app')
 const editingThemeMode = ref('light')
 const editingLrclibInstance = ref('')
 const defaultProvidersOrder = ['lrclib', 'netease', 'simpmusic', 'genius']
@@ -339,8 +359,17 @@ const save = async () => {
     lrclibInstance: editingLrclibInstance.value,
     providersOrder: editingProvidersOrder.value,
     enabledProviders: editingEnabledProviders.value,
-    lastfmLinksEnabled: lastfmLinksEnabled.value
+    lastfmLinksEnabled: linksTarget.value === 'lastfm',
+    showLinks: showLinks.value,
+    linksTarget: linksTarget.value
   })
+  window.dispatchEvent(new CustomEvent('config-updated', {
+    detail: {
+      showLinks: showLinks.value,
+      linksTarget: linksTarget.value,
+      lastfmLinksEnabled: linksTarget.value === 'lastfm'
+    }
+  }))
   setThemeMode(editingThemeMode.value)
   setLrclibInstance(editingLrclibInstance.value)
   setShowCoverArtInTrackList(showCoverArtInTrackList.value)
@@ -375,7 +404,8 @@ const beforeOpenHandler = async () => {
   tryEmbedLyrics.value = config.try_embed_lyrics
   embedLyricsOnly.value = config.embed_lyrics_only || false
   preferSyncedLyrics.value = config.prefer_synced_lyrics
-  lastfmLinksEnabled.value = config.lastfm_links_enabled
+  showLinks.value = config.show_links ?? true
+  linksTarget.value = config.links_target || 'in_app'
   editingThemeMode.value = config.theme_mode
   editingLrclibInstance.value = config.lrclib_instance
   editingProvidersOrder.value = normalizeProvidersOrder(config.providers_order)
